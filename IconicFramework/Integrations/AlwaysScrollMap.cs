@@ -1,6 +1,6 @@
 namespace LeFauxMods.IconicFramework.Integrations;
 
-using LeFauxMods.IconicFramework.Api;
+using LeFauxMods.Core.Integrations.IconicFramework;
 using LeFauxMods.IconicFramework.Utilities;
 using Microsoft.Xna.Framework;
 
@@ -30,7 +30,7 @@ internal sealed class AlwaysScrollMap
         var enabledIndoors = reflection.GetField<bool>(config, "EnabledIndoors", false);
         var enabledOutdoors = reflection.GetField<bool>(config, "EnabledOutdoors", false);
 
-        api.AddToolbarIcon(Id, "furyx639.ToolbarIcons/Icons", new Rectangle(32, 16, 16, 16), I18n.Button_AlwaysScrollMap());
+        api.AddToolbarIcon(Id, Constants.IconPath, new Rectangle(32, 16, 16, 16), I18n.Button_AlwaysScrollMap());
         api.Subscribe(e =>
         {
             if (e.Id == Id)

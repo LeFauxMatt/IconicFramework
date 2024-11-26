@@ -1,12 +1,12 @@
 namespace LeFauxMods.IconicFramework.Integrations;
 
-using LeFauxMods.IconicFramework.Api;
+using LeFauxMods.Core.Integrations.IconicFramework;
 using Microsoft.Xna.Framework;
 
 /// <summary>Vanilla integration with collisions.</summary>
 internal sealed class ToggleCollisions
 {
-    private const string Id = "furyx639.IconicFramework/ToggleCollisions";
+    private const string Id = "ToggleCollisions";
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ToggleCollisions"/> class.
@@ -14,7 +14,7 @@ internal sealed class ToggleCollisions
     /// <param name="api">The Iconic Framework API.</param>
     public ToggleCollisions(IIconicFrameworkApi api)
     {
-        api.AddToolbarIcon(Id, "furyx639.ToolbarIcons/Icons", new Rectangle(16, 16, 16, 16), I18n.Button_NoClip());
+        api.AddToolbarIcon(Id, Constants.IconPath, new Rectangle(16, 16, 16, 16), I18n.Button_NoClip());
         api.Subscribe(e =>
         {
             if (e.Id == Id)

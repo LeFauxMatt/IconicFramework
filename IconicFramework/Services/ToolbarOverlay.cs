@@ -1,42 +1,39 @@
-namespace LeFauxMods.IconicFramework.Features;
+namespace LeFauxMods.IconicFramework.Services;
 
-using LeFauxMods.IconicFramework.Api;
+using LeFauxMods.Core.Integrations.IconicFramework;
 using LeFauxMods.IconicFramework.Models;
-using LeFauxMods.IconicFramework.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley.Menus;
 
-internal sealed class PlayerOverlay : IClickableMenu, IDisposable
+internal sealed class ToolbarOverlay : IClickableMenu, IDisposable
 {
     private readonly List<ClickableTextureComponent> buttons = [];
     private readonly ModConfig config;
-    private readonly EventManager eventManager;
     private readonly IModHelper helper;
     private readonly Dictionary<string, Icon> icons;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="PlayerOverlay"/> class.
+    /// Initializes a new instance of the <see cref="ToolbarOverlay"/> class.
     /// </summary>
     /// <param name="helper"></param>
     /// <param name="config"></param>
-    /// <param name="eventManager"></param>
     /// <param name="icons"></param>
-    public PlayerOverlay(IModHelper helper, ModConfig config, EventManager eventManager, Dictionary<string, Icon> icons)
-        : base((Game1.uiViewport.Width / 2) - 384 - 64, Game1.uiViewport.Height, 896, 208)
+    public ToolbarOverlay(IModHelper helper, ModConfig config, Dictionary<string, Icon> icons)
     {
         // Init
         this.helper = helper;
         this.config = config;
-        this.eventManager = eventManager;
         this.icons = icons;
-        this.ReinitializeIcons();
+
+        // Events
+        EventBus.Subscribe<Signals>(this.OnSignal);
+
+        this.RefreshIcons();
     }
 
     /// <inheritdoc />
-    public void Dispose()
-    {
-    }
+    public void Dispose() => EventBus.Unsubscribe<Signals>(this.OnSignal);
 
     /// <inheritdoc />
     public override void draw(SpriteBatch b)
@@ -49,7 +46,7 @@ internal sealed class PlayerOverlay : IClickableMenu, IDisposable
         this.AdjustPositionsIfNeeded();
         foreach (var button in this.buttons)
         {
-            button.scale = Math.Max(Game1.pixelZoom, button.scale - 0.025f);
+            button.scale = Math.Max(2f, button.scale - 0.025f);
             button.draw(b);
         }
     }
@@ -74,9 +71,9 @@ internal sealed class PlayerOverlay : IClickableMenu, IDisposable
     /// <inheritdoc />
     public override void performHoverAction(int x, int y)
     {
-        foreach (var button in this.buttons.Where(button => button.containsPoint(x, y)))
+        foreach (var button in this.buttons)
         {
-            button.tryHover(x, y, 0.1f);
+            button.tryHover(x, y, 0.25f);
         }
     }
 
@@ -86,7 +83,7 @@ internal sealed class PlayerOverlay : IClickableMenu, IDisposable
         var button = this.buttons.FirstOrDefault(button => button.containsPoint(x, y));
         if (button is not null)
         {
-            this.eventManager.Publish<IIconPressedEventArgs, IconPressedEventArgs>(new IconPressedEventArgs(button.name, SButton.MouseLeft));
+            EventBus.Publish<IIconPressedEventArgs, IconPressedEventArgs>(new IconPressedEventArgs(button.name, SButton.MouseLeft));
         }
     }
 
@@ -96,48 +93,48 @@ internal sealed class PlayerOverlay : IClickableMenu, IDisposable
         var button = this.buttons.FirstOrDefault(button => button.containsPoint(x, y));
         if (button is not null)
         {
-            this.eventManager.Publish(new IconPressedEventArgs(button.name, SButton.MouseRight));
+            EventBus.Publish(new IconPressedEventArgs(button.name, SButton.MouseRight));
         }
     }
 
     private void AdjustPositionsIfNeeded(bool force = false)
     {
         var playerGlobalPos = Game1.player.StandingPixel.ToVector2();
-        var playerLocalVec = Game1.GlobalToLocal(Game1.viewport, playerGlobalPos).ToPoint();
-        var previousX = this.xPositionOnScreen;
+        var playerLocalVec = Game1.GlobalToLocal(Game1.viewport, playerGlobalPos);
+        var alignTop = !Game1.options.pinToolbarToggle && (playerLocalVec.Y > (Game1.viewport.Height / 2) + 64);
+        var margin = Utility.makeSafeMarginY(8);
         var previousY = this.yPositionOnScreen;
-        this.xPositionOnScreen = playerLocalVec.X;
-        this.yPositionOnScreen = playerLocalVec.Y - Game1.tileSize;
+        this.yPositionOnScreen = alignTop ? 112 + margin - 8 : Game1.uiViewport.Height - 144 - margin + 8;
 
-        if (!force && previousX == this.xPositionOnScreen && previousY == this.yPositionOnScreen)
+        if (!force && previousY == this.yPositionOnScreen)
         {
             return;
         }
 
-        const float radius = Game1.tileSize * 2.5f;
-        var angleStep = 2 * Math.PI / this.buttons.Count;
-
         for (var i = 0; i < this.buttons.Count; i++)
         {
-            var angle = i * angleStep;
-            var x = this.xPositionOnScreen + (int)(radius * Math.Cos(angle));
-            var y = this.yPositionOnScreen + (int)(radius * Math.Sin(angle));
-
-            this.buttons[i].bounds = new Rectangle(
-                x,
-                y,
-                Game1.tileSize,
-                Game1.tileSize);
+            this.buttons[i].bounds = new Rectangle((Game1.uiViewport.Width / 2) - 384 + (i * 36), this.yPositionOnScreen, 32, 32);
         }
     }
 
-    private void ReinitializeIcons()
+    private void OnSignal(Signals signal)
+    {
+        if (signal != Signals.IconsChanged)
+        {
+            return;
+        }
+
+        this.RefreshIcons();
+    }
+
+    private void RefreshIcons()
     {
         this.buttons.Clear();
+
         foreach (var (id, icon) in this.icons)
         {
             var texture = this.helper.GameContent.Load<Texture2D>(icon.TexturePath);
-            var button = new ClickableTextureComponent(id, Rectangle.Empty, null, icon.HoverText, texture, icon.SourceRect, Game1.pixelZoom);
+            var button = new ClickableTextureComponent(id, Rectangle.Empty, null, icon.HoverText, texture, icon.SourceRect, 2f);
             this.buttons.Add(button);
         }
 

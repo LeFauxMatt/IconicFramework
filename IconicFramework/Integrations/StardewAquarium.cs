@@ -1,6 +1,6 @@
 namespace LeFauxMods.IconicFramework.Integrations;
 
-using LeFauxMods.IconicFramework.Api;
+using LeFauxMods.Core.Integrations.IconicFramework;
 using LeFauxMods.IconicFramework.Utilities;
 using Microsoft.Xna.Framework;
 
@@ -27,7 +27,7 @@ internal sealed class StardewAquarium
             return;
         }
 
-        api.AddToolbarIcon(Id, "furyx639.ToolbarIcons/Icons", new Rectangle(0, 0, 16, 16), I18n.Button_StardewAquarium());
+        api.AddToolbarIcon(Id, Constants.IconPath, new Rectangle(0, 0, 16, 16), I18n.Button_StardewAquarium());
         api.Subscribe(e =>
         {
             if (e.Id == Id)

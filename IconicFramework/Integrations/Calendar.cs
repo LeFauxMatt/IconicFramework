@@ -1,13 +1,13 @@
 namespace LeFauxMods.IconicFramework.Integrations;
 
-using LeFauxMods.IconicFramework.Api;
+using LeFauxMods.Core.Integrations.IconicFramework;
 using Microsoft.Xna.Framework;
 using StardewValley.Menus;
 
 /// <summary>Vanilla integration with calendar.</summary>
 internal sealed class Calendar
 {
-    private const string Id = "furyx639.IconicFramework/Calendar";
+    private const string Id = "Calendar";
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Calendar"/> class.
@@ -15,7 +15,7 @@ internal sealed class Calendar
     /// <param name="api">The Iconic Framework API.</param>
     public Calendar(IIconicFrameworkApi api)
     {
-        api.AddToolbarIcon(Id, "furyx639.ToolbarIcons/Icons", new Rectangle(32, 16, 16, 16), I18n.Button_Calendar());
+        api.AddToolbarIcon(Id, Constants.IconPath, new Rectangle(32, 16, 16, 16), I18n.Button_Calendar());
         api.Subscribe(e =>
         {
             if (e.Id == Id)

@@ -1,7 +1,7 @@
 namespace LeFauxMods.IconicFramework.Integrations;
 
 using System.Reflection;
-using LeFauxMods.IconicFramework.Api;
+using LeFauxMods.Core.Integrations.IconicFramework;
 using LeFauxMods.IconicFramework.Utilities;
 using Microsoft.Xna.Framework;
 using StardewValley.Menus;
@@ -30,7 +30,7 @@ internal sealed class ToDew
             return;
         }
 
-        api.AddToolbarIcon(Id, "furyx639.ToolbarIcons/Icons", new Rectangle(48, 16, 16, 16), I18n.Button_ToDew());
+        api.AddToolbarIcon(Id, Constants.IconPath, new Rectangle(48, 16, 16, 16), I18n.Button_ToDew());
         api.Subscribe(e =>
         {
             if (e.Id == Id)

@@ -1,6 +1,6 @@
 namespace LeFauxMods.IconicFramework.Integrations;
 
-using LeFauxMods.IconicFramework.Api;
+using LeFauxMods.Core.Integrations.IconicFramework;
 using LeFauxMods.IconicFramework.Utilities;
 using Microsoft.Xna.Framework;
 
@@ -27,7 +27,7 @@ internal sealed class CjbCheatsMenu
             return;
         }
 
-        api.AddToolbarIcon(Id, "furyx639.ToolbarIcons/Icons", new Rectangle(16, 16, 16, 16), I18n.Button_CheatsMenu());
+        api.AddToolbarIcon(Id, "LooseSprites/Cursors", new Rectangle(346, 392, 8, 8), I18n.Button_CheatsMenu());
         api.Subscribe(e =>
         {
             if (e.Id == Id)

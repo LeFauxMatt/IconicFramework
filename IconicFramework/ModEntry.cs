@@ -3,7 +3,7 @@ namespace LeFauxMods.IconicFramework;
 using System;
 using LeFauxMods.IconicFramework.Integrations;
 using LeFauxMods.IconicFramework.Models;
-using LeFauxMods.IconicFramework.States;
+using LeFauxMods.IconicFramework.Services;
 using LeFauxMods.IconicFramework.Utilities;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI.Events;
@@ -11,7 +11,6 @@ using StardewModdingAPI.Events;
 /// <inheritdoc/>
 internal sealed class ModEntry : Mod
 {
-    private readonly EventManager eventManager = new();
     private readonly Dictionary<string, Icon> icons = [];
     private ModConfig config = null!;
 
@@ -22,16 +21,16 @@ internal sealed class ModEntry : Mod
         I18n.Init(this.Helper.Translation);
         _ = new Log(this.Monitor);
         this.config = helper.ReadConfig<ModConfig>();
-        _ = new IntegrationHelper(this.Helper.ModRegistry);
+        _ = new IntegrationHelper(this.Helper.ModRegistry, this.Helper.Reflection);
 
         // Integrations
         var modInfo = this.Helper.ModRegistry.Get(this.ModManifest.UniqueID)!;
-        var api = new ModApi(modInfo, this.eventManager, this.icons);
+        var api = new ModApi(modInfo, this.icons);
         _ = new AlwaysScrollMap(api, this.Helper.Reflection);
         _ = new Calendar(api);
         _ = new CjbCheatsMenu(api, this.Helper.Reflection);
         _ = new CjbItemSpawner(api, this.Helper.Reflection);
-        _ = new ContentPack(api);
+        _ = new ContentPack(this.Helper, api);
         _ = new DailyQuests(api);
         _ = new GenericModConfigMenu(api, this.Helper.Reflection);
         _ = new SpecialOrders(api);
@@ -40,27 +39,31 @@ internal sealed class ModEntry : Mod
         _ = new ToggleCollisions(api);
 
         // Events
-        this.Helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
         this.Helper.Events.Content.AssetRequested += this.OnAssetRequested;
+        this.Helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
+        this.Helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
     }
 
     /// <inheritdoc/>
-    public override object? GetApi(IModInfo mod) => new ModApi(mod, this.eventManager, this.icons);
+    public override object? GetApi(IModInfo mod) => new ModApi(mod, this.icons);
 
     private void OnAssetRequested(object? sender, AssetRequestedEventArgs e)
     {
-        if (e.NameWithoutLocale.IsEquivalentTo("furyx639.ToolbarIcons/Data"))
+        if (e.NameWithoutLocale.IsEquivalentTo(Constants.DataPath))
         {
             e.LoadFrom(static () => new Dictionary<string, ContentPackData>(StringComparer.OrdinalIgnoreCase), AssetLoadPriority.Exclusive);
             return;
         }
 
-        if (e.NameWithoutLocale.IsEquivalentTo("furyx639.ToolbarIcons/Icons"))
+        if (e.NameWithoutLocale.IsEquivalentTo(Constants.IconPath))
         {
             e.LoadFromModFile<Texture2D>("assets/icons.png", AssetLoadPriority.Exclusive);
         }
     }
 
     private void OnGameLaunched(object? sender, GameLaunchedEventArgs e) =>
-        _ = new TitleMenu(this.Helper, this.config, this.eventManager, this.ModManifest, this.icons);
+        _ = new PlayerOverlay(this.Helper, this.config, this.ModManifest, this.icons);
+
+    private void OnSaveLoaded(object? sender, SaveLoadedEventArgs e) =>
+        Game1.onScreenMenus.Add(new ToolbarOverlay(this.Helper, this.config, this.icons));
 }

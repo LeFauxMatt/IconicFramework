@@ -1,15 +1,18 @@
 namespace LeFauxMods.IconicFramework;
 
-using LeFauxMods.IconicFramework.Api;
 using System;
 using Microsoft.Xna.Framework;
-using LeFauxMods.IconicFramework.Utilities;
 using LeFauxMods.IconicFramework.Models;
+using LeFauxMods.Core.Utilities;
+using LeFauxMods.Core.Integrations.IconicFramework;
+using LeFauxMods.Core.Services;
+using LeFauxMods.IconicFramework.Utilities;
+using System.Collections.Generic;
 
 /// <inheritdoc/>
 public sealed class ModApi : IIconicFrameworkApi
 {
-    private readonly EventManager eventManager;
+    private readonly EventManager eventManager = new();
     private readonly Dictionary<string, Icon> icons;
     private readonly Dictionary<string, string> ids = [];
     private readonly IModInfo mod;
@@ -19,16 +22,14 @@ public sealed class ModApi : IIconicFrameworkApi
     /// Creates a new instance of the <see cref="ModApi"/> class.
     /// </summary>
     /// <param name="mod"></param>
-    /// <param name="eventManager"></param>
     /// <param name="icons"></param>
-    internal ModApi(IModInfo mod, EventManager eventManager, Dictionary<string, Icon> icons)
+    internal ModApi(IModInfo mod, Dictionary<string, Icon> icons)
     {
         this.mod = mod;
-        this.eventManager = eventManager;
         this.icons = icons;
 
         // Events
-        eventManager.Subscribe<IIconPressedEventArgs>(this.OnIconPressed);
+        EventBus.Subscribe<IIconPressedEventArgs>(this.OnIconPressed);
     }
 
     /// <inheritdoc />
@@ -51,16 +52,51 @@ public sealed class ModApi : IIconicFrameworkApi
     public void AddToolbarIcon(string id, string texturePath, Rectangle? sourceRect, string? hoverText)
     {
         var uniqueId = $"{this.mod.Manifest.UniqueID}-{id}";
-        this.ids.Add(uniqueId, id);
-        this.icons.Add(uniqueId, new Icon(texturePath, sourceRect, hoverText));
+        if (!this.ids.TryAdd(uniqueId, id))
+        {
+            return;
+        }
+
+        this.icons.Add(uniqueId, new Icon(uniqueId, texturePath, sourceRect, hoverText));
+        EventBus.Publish(Signals.IconsChanged);
+    }
+
+    /// <inheritdoc/>
+    public void AddToolbarIcon(IIcon icon, string? hoverText)
+    {
+        if (!this.ids.TryAdd(icon.UniqueId, icon.Id))
+        {
+            return;
+        }
+
+        this.icons.Add(icon.UniqueId, new Icon(icon.UniqueId, icon.Path, icon.Area, hoverText));
     }
 
     /// <inheritdoc/>
     public void RemoveToolbarIcon(string id)
     {
         var uniqueId = $"{this.mod.Manifest.UniqueID}-{id}";
+        if (!this.ids.ContainsKey(uniqueId))
+        {
+            return;
+        }
+
         _ = this.ids.Remove(uniqueId);
-        this.icons.Remove(uniqueId);
+        _ = this.icons.Remove(uniqueId);
+        EventBus.Publish(Signals.IconsChanged);
+    }
+
+    /// <inheritdoc/>
+    public void RemoveToolbarIcon(IIcon icon)
+    {
+        if (!this.ids.ContainsKey(icon.UniqueId))
+        {
+            return;
+        }
+
+        _ = this.ids.Remove(icon.UniqueId);
+        _ = this.icons.Remove(icon.UniqueId);
+        EventBus.Publish(Signals.IconsChanged);
     }
 
     /// <inheritdoc/>
@@ -69,15 +105,14 @@ public sealed class ModApi : IIconicFrameworkApi
     /// <inheritdoc/>
     public void Unsubscribe(Action<IIconPressedEventArgs> handler) => this.eventManager.Unsubscribe(handler);
 
-    private void OnIconPressed(IIconPressedEventArgs args)
+    private void OnIconPressed(IIconPressedEventArgs e)
     {
-        if (!this.ids.TryGetValue(args.Id, out var id))
+        if (!this.ids.TryGetValue(e.Id, out var id))
         {
             return;
         }
 
-        this.eventManager.Publish<IIconPressedEventArgs, IconPressedEventArgs>(new IconPressedEventArgs(id, args.Button));
-
+        this.eventManager.Publish<IIconPressedEventArgs, IconPressedEventArgs>(new IconPressedEventArgs(id, e.Button));
         if (this.toolbarIconPressed is null)
         {
             return;
