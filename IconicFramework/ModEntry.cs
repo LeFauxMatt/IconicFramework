@@ -5,7 +5,6 @@ using LeFauxMods.IconicFramework.Integrations;
 using LeFauxMods.IconicFramework.Models;
 using LeFauxMods.IconicFramework.Services;
 using LeFauxMods.IconicFramework.Utilities;
-using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI.Events;
 
 /// <inheritdoc/>
@@ -22,6 +21,8 @@ internal sealed class ModEntry : Mod
         _ = new Log(this.Monitor);
         this.config = helper.ReadConfig<ModConfig>();
         _ = new IntegrationHelper(this.Helper.ModRegistry, this.Helper.Reflection);
+        ThemeHelper.AddAsset(Constants.IconPath, this.Helper.ModContent.Load<IRawTextureData>("assets/icons.png"));
+        ThemeHelper.AddAsset(Constants.UIPath, this.Helper.ModContent.Load<IRawTextureData>("assets/ui.png"));
 
         // Integrations
         var modInfo = this.Helper.ModRegistry.Get(this.ModManifest.UniqueID)!;
@@ -52,12 +53,6 @@ internal sealed class ModEntry : Mod
         if (e.NameWithoutLocale.IsEquivalentTo(Constants.DataPath))
         {
             e.LoadFrom(static () => new Dictionary<string, ContentPackData>(StringComparer.OrdinalIgnoreCase), AssetLoadPriority.Exclusive);
-            return;
-        }
-
-        if (e.NameWithoutLocale.IsEquivalentTo(Constants.IconPath))
-        {
-            e.LoadFromModFile<Texture2D>("assets/icons.png", AssetLoadPriority.Exclusive);
         }
     }
 

@@ -1,13 +1,13 @@
-namespace LeFauxMods.IconicFramework;
+namespace LeFauxMods.IconicFramework.Services;
 
 using System;
-using Microsoft.Xna.Framework;
-using LeFauxMods.IconicFramework.Models;
-using LeFauxMods.Core.Utilities;
+using System.Collections.Generic;
 using LeFauxMods.Core.Integrations.IconicFramework;
 using LeFauxMods.Core.Services;
+using LeFauxMods.Core.Utilities;
+using LeFauxMods.IconicFramework.Models;
 using LeFauxMods.IconicFramework.Utilities;
-using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 /// <inheritdoc/>
 public sealed class ModApi : IIconicFrameworkApi
@@ -58,7 +58,7 @@ public sealed class ModApi : IIconicFrameworkApi
         }
 
         this.icons.Add(uniqueId, new Icon(uniqueId, texturePath, sourceRect, hoverText));
-        EventBus.Publish(Signals.IconsChanged);
+        EventBus.Publish(ModSignal.IconsChanged);
     }
 
     /// <inheritdoc/>
@@ -83,7 +83,7 @@ public sealed class ModApi : IIconicFrameworkApi
 
         _ = this.ids.Remove(uniqueId);
         _ = this.icons.Remove(uniqueId);
-        EventBus.Publish(Signals.IconsChanged);
+        EventBus.Publish(ModSignal.IconsChanged);
     }
 
     /// <inheritdoc/>
@@ -96,7 +96,7 @@ public sealed class ModApi : IIconicFrameworkApi
 
         _ = this.ids.Remove(icon.UniqueId);
         _ = this.icons.Remove(icon.UniqueId);
-        EventBus.Publish(Signals.IconsChanged);
+        EventBus.Publish(ModSignal.IconsChanged);
     }
 
     /// <inheritdoc/>

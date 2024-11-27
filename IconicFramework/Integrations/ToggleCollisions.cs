@@ -1,6 +1,7 @@
 namespace LeFauxMods.IconicFramework.Integrations;
 
 using LeFauxMods.Core.Integrations.IconicFramework;
+using LeFauxMods.IconicFramework.Utilities;
 using Microsoft.Xna.Framework;
 
 /// <summary>Vanilla integration with collisions.</summary>
@@ -17,10 +18,19 @@ internal sealed class ToggleCollisions
         api.AddToolbarIcon(Id, Constants.IconPath, new Rectangle(16, 16, 16, 16), I18n.Button_NoClip());
         api.Subscribe(e =>
         {
-            if (e.Id == Id)
+            if (e.Id != Id)
             {
-                Game1.player.ignoreCollisions = !Game1.player.ignoreCollisions;
+                return;
             }
+
+            Game1.player.ignoreCollisions = !Game1.player.ignoreCollisions;
+            if (Game1.player.ignoreCollisions)
+            {
+                Log.Alert(I18n.Button_NoClip_On(), HUDMessage.error_type);
+                return;
+            }
+
+            Log.Alert(I18n.Button_NoClip_Off(), HUDMessage.stamina_type);
         });
     }
 }

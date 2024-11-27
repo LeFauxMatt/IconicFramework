@@ -6,7 +6,9 @@
   "button.ItemSpawner": "Show CJB Item Spawner",
   "button.GenericModConfigMenu": "Configure Mods",
   "button.NoClip": "Toggle Collision",
+  "button.NoClip.On": "Collision Disabled",
+  "button.NoClip.Off": "Collision Enabled",
   "button.StardewAquarium": "Stardew Aquarium Collection",
   "button.ToDew": "Open To-Dew List",
-  "button.SpecialOrders": "Check Special Orders",
+  "button.SpecialOrders": "Check Special Orders"
 }

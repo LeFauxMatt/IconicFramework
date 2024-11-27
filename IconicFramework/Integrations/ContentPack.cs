@@ -1,5 +1,6 @@
 namespace LeFauxMods.IconicFramework.Integrations;
 
+using LeFauxMods.Core.Integrations.ContentPatcher;
 using LeFauxMods.Core.Integrations.IconicFramework;
 using LeFauxMods.IconicFramework.Models;
 using LeFauxMods.IconicFramework.Utilities;
@@ -20,6 +21,9 @@ internal sealed class ContentPack
         // Events
         helper.Events.Content.AssetsInvalidated += this.OnAssetsInvalidated;
         this.api.Subscribe(this.OnIconPressed);
+
+        var contentPatcher = new ContentPatcherIntegration(helper);
+        contentPatcher.ConditionsApiReady += this.OnConditionsApiReady;
     }
 
     private void AddIcon(string id, ContentPackData data)
@@ -63,6 +67,8 @@ internal sealed class ContentPack
             this.ReloadIcons();
         }
     }
+
+    private void OnConditionsApiReady(object? sender, bool e) => this.ReloadIcons();
 
     private void OnIconPressed(IIconPressedEventArgs e)
     {
