@@ -12,6 +12,7 @@ internal sealed class PlayerOverlay : IRadialMenuPageFactory, IRadialMenuPage
     private readonly IModHelper helper;
     private readonly Dictionary<string, Icon> icons;
     private readonly List<IRadialMenuItem> items = [];
+    private readonly IManifest manifest;
     private readonly RadialMenuIntegration radialMenu;
 
     public PlayerOverlay(IModHelper helper, ModConfig config, IManifest manifest, Dictionary<string, Icon> icons)
@@ -19,6 +20,7 @@ internal sealed class PlayerOverlay : IRadialMenuPageFactory, IRadialMenuPage
         // Init
         this.radialMenu = new(helper.ModRegistry);
         this.helper = helper;
+        this.manifest = manifest;
         this.icons = icons;
 
         if (!this.radialMenu.IsLoaded)
@@ -27,6 +29,9 @@ internal sealed class PlayerOverlay : IRadialMenuPageFactory, IRadialMenuPage
         }
 
         this.radialMenu.Api.RegisterCustomMenuPage(manifest, "icons", this);
+
+        // Events
+        EventBus.Subscribe<ModSignal>(this.OnSignal);
         this.RefreshIcons();
     }
 
@@ -36,8 +41,23 @@ internal sealed class PlayerOverlay : IRadialMenuPageFactory, IRadialMenuPage
 
     public IRadialMenuPage CreatePage(Farmer who) => this;
 
+    private void OnSignal(ModSignal signal)
+    {
+        if (signal != ModSignal.IconsChanged)
+        {
+            return;
+        }
+
+        this.RefreshIcons();
+    }
+
     private void RefreshIcons()
     {
+        if (!this.radialMenu.IsLoaded)
+        {
+            return;
+        }
+
         this.items.Clear();
         foreach (var (id, icon) in this.icons)
         {
@@ -56,6 +76,8 @@ internal sealed class PlayerOverlay : IRadialMenuPageFactory, IRadialMenuPage
 
             this.items.Add(menuItem);
         }
+
+        this.radialMenu.Api.InvalidatePage(this.manifest, "icons");
     }
 
     private class MenuItem(string uniqueId, string? hoverText, Texture2D texture, Rectangle? sourceRect, Action onSelect) : IRadialMenuItem

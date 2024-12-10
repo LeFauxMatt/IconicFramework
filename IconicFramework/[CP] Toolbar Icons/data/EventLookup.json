@@ -1,0 +1,19 @@
+{
+  "Changes": [
+    {
+      "LogName": "Toolbar Icon for EventLookup.Lookup",
+      "Action": "EditData",
+      "Target": "furyx639.ToolbarIcons/Data",
+      "Entries": {
+        "{{ModId}}/EventLookup.Lookup": {
+          "ModId": "shekurika.EventLookup",
+          "Type": "Keybind",
+          "ExtraData": "{{EventLookupHotkey}}",
+          "HoverText": "{{i18n: button.EventLookup}}",
+          "TexturePath": "furyx639.ToolbarIcons/Icons",
+          "SourceRect": { "X": 16, "Y": 32, "Width": 16, "Height": 16 }
+        }
+      }
+    }
+  ]
+}

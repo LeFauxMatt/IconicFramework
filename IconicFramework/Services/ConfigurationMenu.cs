@@ -33,5 +33,9 @@ internal sealed class ConfigurationMenu
     {
     }
 
-    private void Save() => this.helper.WriteConfig(this.config);
+    private void Save()
+    {
+        this.helper.WriteConfig(this.config);
+        EventBus.Publish(ModSignal.ConfigChanged);
+    }
 }

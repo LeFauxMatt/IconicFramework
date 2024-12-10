@@ -1,0 +1,19 @@
+{
+  "Changes": [
+    {
+      "LogName": "Toolbar Icon for DataLayers.Toggle",
+      "Action": "EditData",
+      "Target": "furyx639.ToolbarIcons/Data",
+      "Entries": {
+        "{{ModId}}/DataLayers.Toggle": {
+          "ModId": "Pathoschild.DataLayers",
+          "Type": "Method",
+          "ExtraData": "ToggleLayers",
+          "HoverText": "{{i18n: button.DataLayers}}",
+          "TexturePath": "furyx639.ToolbarIcons/Icons",
+          "SourceRect": { "X": 64, "Y": 16, "Width": 16, "Height": 16 }
+        }
+      }
+    }
+  ]
+}
