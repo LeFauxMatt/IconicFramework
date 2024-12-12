@@ -1,5 +1,8 @@
 namespace LeFauxMods.IconicFramework.Services;
 
+using Common.Integrations.IconicFramework;
+using Common.Integrations.RadialMenu;
+using Common.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Models;
@@ -15,7 +18,7 @@ internal sealed class PlayerOverlay : IRadialMenuPageFactory, IRadialMenuPage
     public PlayerOverlay(IModHelper helper, ModConfig config, IManifest manifest, Dictionary<string, Icon> icons)
     {
         // Init
-        this.radialMenu = new(helper.ModRegistry);
+        this.radialMenu = new RadialMenuIntegration(helper.ModRegistry);
         this.helper = helper;
         this.manifest = manifest;
         this.icons = icons;
@@ -28,7 +31,7 @@ internal sealed class PlayerOverlay : IRadialMenuPageFactory, IRadialMenuPage
         this.radialMenu.Api.RegisterCustomMenuPage(manifest, "icons", this);
 
         // Events
-        EventBus.Subscribe<ModSignal>(this.OnSignal);
+        ModEvents.Subscribe<ModSignal>(this.OnSignal);
         this.RefreshIcons();
     }
 
@@ -68,7 +71,7 @@ internal sealed class PlayerOverlay : IRadialMenuPageFactory, IRadialMenuPage
                 () =>
                 {
                     this.SelectedItemIndex = count;
-                    EventBus.Publish<IIconPressedEventArgs, IconPressedEventArgs>(
+                    ModEvents.Publish<IIconPressedEventArgs, IconPressedEventArgs>(
                         new IconPressedEventArgs(id, SButton.MouseLeft));
                 });
 

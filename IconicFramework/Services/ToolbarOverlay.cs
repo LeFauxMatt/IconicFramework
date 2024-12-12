@@ -1,6 +1,8 @@
 namespace LeFauxMods.IconicFramework.Services;
 
 using System.Globalization;
+using Common.Integrations.IconicFramework;
+using Common.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Models;
@@ -28,13 +30,12 @@ internal sealed class ToolbarOverlay : IClickableMenu, IDisposable
         this.icons = icons;
 
         // Events
-        EventBus.Subscribe<ModSignal>(this.OnSignal);
-
+        ModEvents.Subscribe<ModSignal>(this.OnSignal);
         this.RefreshIcons();
     }
 
     /// <inheritdoc />
-    public void Dispose() => EventBus.Unsubscribe<ModSignal>(this.OnSignal);
+    public void Dispose() => ModEvents.Unsubscribe<ModSignal>(this.OnSignal);
 
     /// <inheritdoc />
     public override void draw(SpriteBatch b)
@@ -107,7 +108,7 @@ internal sealed class ToolbarOverlay : IClickableMenu, IDisposable
             }
 
             var button = this.buttons[i];
-            EventBus.Publish<IIconPressedEventArgs, IconPressedEventArgs>(
+            ModEvents.Publish<IIconPressedEventArgs, IconPressedEventArgs>(
                 new IconPressedEventArgs(button.name, SButton.MouseLeft));
 
             if (this.config.PlaySound)
@@ -130,7 +131,7 @@ internal sealed class ToolbarOverlay : IClickableMenu, IDisposable
             }
 
             var button = this.buttons[i];
-            EventBus.Publish<IIconPressedEventArgs, IconPressedEventArgs>(
+            ModEvents.Publish<IIconPressedEventArgs, IconPressedEventArgs>(
                 new IconPressedEventArgs(button.name, SButton.MouseRight));
 
             if (this.config.PlaySound)

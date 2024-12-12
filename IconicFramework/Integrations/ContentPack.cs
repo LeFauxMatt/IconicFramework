@@ -1,8 +1,12 @@
 namespace LeFauxMods.IconicFramework.Integrations;
 
+using Common.Integrations.ContentPatcher;
+using Common.Integrations.IconicFramework;
+using Common.Utilities;
 using Models;
 using StardewModdingAPI.Events;
 using Utilities;
+using Log = Common.Utilities.Log;
 
 internal sealed class ContentPack
 {
@@ -21,7 +25,10 @@ internal sealed class ContentPack
         this.api.Subscribe(this.OnIconPressed);
 
         var contentPatcher = new ContentPatcherIntegration(helper);
-        contentPatcher.ConditionsApiReady += this.OnConditionsApiReady;
+        if (contentPatcher.IsLoaded)
+        {
+            ModEvents.Subscribe<ConditionsApiReadyEventArgs>(this.OnConditionsApiReady);
+        }
     }
 
     private void AddIcon(string id, ContentPackData data)
@@ -77,7 +84,7 @@ internal sealed class ContentPack
         }
     }
 
-    private void OnConditionsApiReady(object? sender, bool e) => this.ReloadIcons();
+    private void OnConditionsApiReady(ConditionsApiReadyEventArgs e) => this.ReloadIcons();
 
     private void OnIconPressed(IIconPressedEventArgs e)
     {

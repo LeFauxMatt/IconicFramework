@@ -1,6 +1,7 @@
 namespace LeFauxMods.IconicFramework.Integrations;
 
 using System.Reflection;
+using Common.Integrations.IconicFramework;
 using Microsoft.Xna.Framework;
 using StardewValley.Menus;
 using Utilities;

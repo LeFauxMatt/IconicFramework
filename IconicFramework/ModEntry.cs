@@ -1,5 +1,6 @@
 namespace LeFauxMods.IconicFramework;
 
+using Common.Utilities;
 using Integrations;
 using Models;
 using Services;
@@ -17,11 +18,10 @@ internal sealed class ModEntry : Mod
     {
         // Init
         I18n.Init(this.Helper.Translation);
-        _ = new Log(this.Monitor);
+        Log.Init(this.Monitor);
+        _ = AssetHandler.Init(this.Helper);
         this.config = helper.ReadConfig<ModConfig>();
         _ = new IntegrationHelper(this.Helper.ModRegistry, this.Helper.Reflection);
-        ThemeHelper.AddAsset(Constants.IconPath, this.Helper.ModContent.Load<IRawTextureData>("assets/icons.png"));
-        ThemeHelper.AddAsset(Constants.UIPath, this.Helper.ModContent.Load<IRawTextureData>("assets/ui.png"));
 
         // Integrations
         var modInfo = this.Helper.ModRegistry.Get(this.ModManifest.UniqueID)!;
@@ -39,22 +39,12 @@ internal sealed class ModEntry : Mod
         _ = new ToggleCollisions(api);
 
         // Events
-        this.Helper.Events.Content.AssetRequested += this.OnAssetRequested;
         this.Helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
         this.Helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
     }
 
     /// <inheritdoc />
-    public override object? GetApi(IModInfo mod) => new ModApi(mod, this.icons);
-
-    private void OnAssetRequested(object? sender, AssetRequestedEventArgs e)
-    {
-        if (e.NameWithoutLocale.IsEquivalentTo(Constants.DataPath))
-        {
-            e.LoadFrom(static () => new Dictionary<string, ContentPackData>(StringComparer.OrdinalIgnoreCase),
-                AssetLoadPriority.Exclusive);
-        }
-    }
+    public override object GetApi(IModInfo mod) => new ModApi(mod, this.icons);
 
     private void OnGameLaunched(object? sender, GameLaunchedEventArgs e) =>
         _ = new PlayerOverlay(this.Helper, this.config, this.ModManifest, this.icons);

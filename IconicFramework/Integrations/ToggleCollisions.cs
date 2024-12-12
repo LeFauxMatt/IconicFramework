@@ -1,7 +1,8 @@
 namespace LeFauxMods.IconicFramework.Integrations;
 
+using Common.Integrations.IconicFramework;
+using Common.Utilities;
 using Microsoft.Xna.Framework;
-using Utilities;
 
 /// <summary>Vanilla integration with collisions.</summary>
 internal sealed class ToggleCollisions

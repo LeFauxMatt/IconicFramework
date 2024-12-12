@@ -1,5 +1,6 @@
 namespace LeFauxMods.IconicFramework.Integrations;
 
+using Common.Integrations.IconicFramework;
 using Microsoft.Xna.Framework;
 using Utilities;
 
