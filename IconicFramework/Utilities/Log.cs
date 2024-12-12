@@ -1,7 +1,5 @@
 namespace LeFauxMods.IconicFramework.Utilities;
 
-using LeFauxMods.Core.Services;
-
 /// <summary>Static wrapper for logging service.</summary>
 internal sealed class Log
 {
@@ -10,7 +8,7 @@ internal sealed class Log
     private readonly SimpleLogging simpleLogging;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Log" /> class.
+    ///     Initializes a new instance of the <see cref="Log" /> class.
     /// </summary>
     /// <param name="monitor">Dependency used for monitoring and logging.</param>
     public Log(IMonitor monitor)
@@ -24,7 +22,8 @@ internal sealed class Log
     /// <param name="hudType">The hud type to show.</param>
     /// <param name="args">The arguments to parse in a formatted string.</param>
     [StringFormatMethod("message")]
-    public static void Alert(string message, int hudType = HUDMessage.error_type, params object?[]? args) => instance.simpleLogging.Alert(message, hudType, args);
+    public static void Alert(string message, int hudType = HUDMessage.error_type, params object?[]? args) =>
+        instance.simpleLogging.Alert(message, hudType, args);
 
     /// <summary>Logs a debug message to the console.</summary>
     /// <param name="message">The message to send.</param>
@@ -54,7 +53,8 @@ internal sealed class Log
     /// <param name="message">The message to send.</param>
     /// <param name="args">The arguments to parse in a formatted string.</param>
     [StringFormatMethod("message")]
-    public static void TraceOnce(string message, params object?[]? args) => instance.simpleLogging.TraceOnce(message, args);
+    public static void TraceOnce(string message, params object?[]? args) =>
+        instance.simpleLogging.TraceOnce(message, args);
 
     /// <summary>Logs a warn message to the console.</summary>
     /// <param name="message">The message to send.</param>
@@ -66,5 +66,6 @@ internal sealed class Log
     /// <param name="message">The message to send.</param>
     /// <param name="args">The arguments to parse in a formatted string.</param>
     [StringFormatMethod("message")]
-    public static void WarnOnce(string message, params object?[]? args) => instance.simpleLogging.WarnOnce(message, args);
+    public static void WarnOnce(string message, params object?[]? args) =>
+        instance.simpleLogging.WarnOnce(message, args);
 }

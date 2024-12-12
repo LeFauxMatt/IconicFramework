@@ -1,10 +1,8 @@
 namespace LeFauxMods.IconicFramework.Integrations;
 
-using LeFauxMods.Core.Integrations.ContentPatcher;
-using LeFauxMods.Core.Integrations.IconicFramework;
-using LeFauxMods.IconicFramework.Models;
-using LeFauxMods.IconicFramework.Utilities;
+using Models;
 using StardewModdingAPI.Events;
+using Utilities;
 
 internal sealed class ContentPack
 {
@@ -30,13 +28,19 @@ internal sealed class ContentPack
     {
         switch (data.Type)
         {
-            case IntegrationType.Menu when IntegrationHelper.TryGetMenuAction(data.ModId, data.ExtraData, out var action) && this.actions.TryAdd(id, action):
+            case IntegrationType.Menu
+                when IntegrationHelper.TryGetMenuAction(data.ModId, data.ExtraData, out var action) &&
+                     this.actions.TryAdd(id, action):
                 break;
 
-            case IntegrationType.Method when IntegrationHelper.TryGetMethod(data.ModId, data.ExtraData, out var action) && this.actions.TryAdd(id, action):
+            case IntegrationType.Method
+                when IntegrationHelper.TryGetMethod(data.ModId, data.ExtraData, out var action) &&
+                     this.actions.TryAdd(id, action):
                 break;
 
-            case IntegrationType.Keybind when IntegrationHelper.TryGetKeybindAction(data.ModId, data.ExtraData, out var action) && this.actions.TryAdd(id, action):
+            case IntegrationType.Keybind
+                when IntegrationHelper.TryGetKeybindAction(data.ModId, data.ExtraData, out var action) &&
+                     this.actions.TryAdd(id, action):
                 break;
             case IntegrationType.Menu:
                 break;

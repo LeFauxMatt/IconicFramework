@@ -1,6 +1,5 @@
 namespace LeFauxMods.IconicFramework.Models;
 
-using System.Collections.Generic;
 using StardewModdingAPI.Utilities;
 
 /// <summary>Represents the mod's configuration.</summary>

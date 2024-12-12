@@ -1,20 +1,18 @@
 namespace LeFauxMods.IconicFramework;
 
-using System;
-using LeFauxMods.Core.Utilities;
-using LeFauxMods.IconicFramework.Integrations;
-using LeFauxMods.IconicFramework.Models;
-using LeFauxMods.IconicFramework.Services;
-using LeFauxMods.IconicFramework.Utilities;
+using Integrations;
+using Models;
+using Services;
 using StardewModdingAPI.Events;
+using Utilities;
 
-/// <inheritdoc/>
+/// <inheritdoc />
 internal sealed class ModEntry : Mod
 {
     private readonly Dictionary<string, Icon> icons = [];
     private ModConfig config = null!;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override void Entry(IModHelper helper)
     {
         // Init
@@ -46,14 +44,15 @@ internal sealed class ModEntry : Mod
         this.Helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override object? GetApi(IModInfo mod) => new ModApi(mod, this.icons);
 
     private void OnAssetRequested(object? sender, AssetRequestedEventArgs e)
     {
         if (e.NameWithoutLocale.IsEquivalentTo(Constants.DataPath))
         {
-            e.LoadFrom(static () => new Dictionary<string, ContentPackData>(StringComparer.OrdinalIgnoreCase), AssetLoadPriority.Exclusive);
+            e.LoadFrom(static () => new Dictionary<string, ContentPackData>(StringComparer.OrdinalIgnoreCase),
+                AssetLoadPriority.Exclusive);
         }
     }
 

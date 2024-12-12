@@ -1,11 +1,9 @@
 namespace LeFauxMods.IconicFramework.Services;
 
 using System.Globalization;
-using LeFauxMods.Core.Integrations.IconicFramework;
-using LeFauxMods.Core.Utilities;
-using LeFauxMods.IconicFramework.Models;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Models;
 using StardewValley.Menus;
 
 internal sealed class ToolbarOverlay : IClickableMenu, IDisposable
@@ -17,7 +15,7 @@ internal sealed class ToolbarOverlay : IClickableMenu, IDisposable
     private string hoverText = string.Empty;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ToolbarOverlay"/> class.
+    ///     Initializes a new instance of the <see cref="ToolbarOverlay" /> class.
     /// </summary>
     /// <param name="helper"></param>
     /// <param name="config"></param>
@@ -52,7 +50,8 @@ internal sealed class ToolbarOverlay : IClickableMenu, IDisposable
         {
             var button = this.buttons[i];
             var rect = this.GetSlot(i);
-            rect.Inflate(this.config.IconSize / 4f * (button.scale - button.baseScale), this.config.IconSize / 4f * (button.scale - button.baseScale));
+            rect.Inflate(this.config.IconSize / 4f * (button.scale - button.baseScale),
+                this.config.IconSize / 4f * (button.scale - button.baseScale));
             b.Draw(uiTexture, rect, Color.White);
         }
 
@@ -70,7 +69,8 @@ internal sealed class ToolbarOverlay : IClickableMenu, IDisposable
     }
 
     /// <inheritdoc />
-    public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds) => this.AdjustPositionsIfNeeded(true);
+    public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds) =>
+        this.AdjustPositionsIfNeeded(true);
 
     public override bool isWithinBounds(int x, int y)
     {
@@ -107,7 +107,8 @@ internal sealed class ToolbarOverlay : IClickableMenu, IDisposable
             }
 
             var button = this.buttons[i];
-            EventBus.Publish<IIconPressedEventArgs, IconPressedEventArgs>(new IconPressedEventArgs(button.name, SButton.MouseLeft));
+            EventBus.Publish<IIconPressedEventArgs, IconPressedEventArgs>(
+                new IconPressedEventArgs(button.name, SButton.MouseLeft));
 
             if (this.config.PlaySound)
             {
@@ -129,7 +130,8 @@ internal sealed class ToolbarOverlay : IClickableMenu, IDisposable
             }
 
             var button = this.buttons[i];
-            EventBus.Publish<IIconPressedEventArgs, IconPressedEventArgs>(new IconPressedEventArgs(button.name, SButton.MouseRight));
+            EventBus.Publish<IIconPressedEventArgs, IconPressedEventArgs>(
+                new IconPressedEventArgs(button.name, SButton.MouseRight));
 
             if (this.config.PlaySound)
             {
@@ -144,7 +146,8 @@ internal sealed class ToolbarOverlay : IClickableMenu, IDisposable
     {
         var playerGlobalPos = Game1.player.StandingPixel.ToVector2();
         var playerLocalVec = Game1.GlobalToLocal(Game1.viewport, playerGlobalPos);
-        var alignTop = !Game1.options.pinToolbarToggle && (playerLocalVec.Y > (Game1.viewport.Height / 2) + Game1.tileSize);
+        var alignTop = !Game1.options.pinToolbarToggle &&
+                       playerLocalVec.Y > (Game1.viewport.Height / 2) + Game1.tileSize;
         var margin = Utility.makeSafeMarginY(8);
         var previousX = this.xPositionOnScreen;
         var previousY = this.yPositionOnScreen;
@@ -168,11 +171,12 @@ internal sealed class ToolbarOverlay : IClickableMenu, IDisposable
                 X = slot.X + (int)((this.config.IconSize - width) / 2),
                 Y = slot.Y + (int)((this.config.IconSize - height) / 2),
                 Width = width,
-                Height = height,
+                Height = height
             };
         }
 
-        this.width = (int)((this.buttons.Count * this.config.IconSize) + ((this.buttons.Count - 1) * this.config.IconSpacing));
+        this.width = (int)((this.buttons.Count * this.config.IconSize) +
+                           ((this.buttons.Count - 1) * this.config.IconSpacing));
         this.height = (int)this.config.IconSize;
     }
 
@@ -202,10 +206,12 @@ internal sealed class ToolbarOverlay : IClickableMenu, IDisposable
         {
             var texture = this.helper.GameContent.Load<Texture2D>(icon.TexturePath);
             var scale = this.config.IconSize * 0.75f / Math.Max(icon.SourceRect.Width, icon.SourceRect.Height);
-            var button = new ClickableTextureComponent(id, Rectangle.Empty, null, icon.HoverText, texture, icon.SourceRect, scale);
+            var button = new ClickableTextureComponent(id, Rectangle.Empty, null, icon.HoverText, texture,
+                icon.SourceRect, scale);
 
             this.buttons.Add(button);
-            this.allClickableComponents.Add(new ClickableComponent(Rectangle.Empty, index.ToString(CultureInfo.InvariantCulture)));
+            this.allClickableComponents.Add(new ClickableComponent(Rectangle.Empty,
+                index.ToString(CultureInfo.InvariantCulture)));
             index++;
         }
 

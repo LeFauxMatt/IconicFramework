@@ -1,8 +1,6 @@
 namespace LeFauxMods.IconicFramework.Services;
 
-using LeFauxMods.Core.Integrations.GenericModConfigMenu;
-using LeFauxMods.Core.Utilities;
-using LeFauxMods.IconicFramework.Models;
+using Models;
 
 internal sealed class ConfigurationMenu
 {

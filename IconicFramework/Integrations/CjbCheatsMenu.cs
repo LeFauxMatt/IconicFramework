@@ -1,8 +1,7 @@
 namespace LeFauxMods.IconicFramework.Integrations;
 
-using LeFauxMods.Core.Integrations.IconicFramework;
-using LeFauxMods.IconicFramework.Utilities;
 using Microsoft.Xna.Framework;
+using Utilities;
 
 /// <summary>Mod integration with CJB Cheats Menu.</summary>
 internal sealed class CjbCheatsMenu
@@ -10,7 +9,7 @@ internal sealed class CjbCheatsMenu
     private const string Id = "CJBok.CheatsMenu";
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="CjbCheatsMenu"/> class.
+    ///     Initializes a new instance of the <see cref="CjbCheatsMenu" /> class.
     /// </summary>
     /// <param name="api">The Iconic Framework API.</param>
     /// <param name="reflection">Dependency used for reflecting into non-public code.</param>
@@ -32,7 +31,7 @@ internal sealed class CjbCheatsMenu
         {
             if (e.Id == Id)
             {
-                method.Invoke([0, true]);
+                method.Invoke(0, true);
             }
         });
     }

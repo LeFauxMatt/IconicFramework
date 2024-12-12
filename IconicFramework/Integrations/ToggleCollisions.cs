@@ -1,8 +1,7 @@
 namespace LeFauxMods.IconicFramework.Integrations;
 
-using LeFauxMods.Core.Integrations.IconicFramework;
-using LeFauxMods.IconicFramework.Utilities;
 using Microsoft.Xna.Framework;
+using Utilities;
 
 /// <summary>Vanilla integration with collisions.</summary>
 internal sealed class ToggleCollisions
@@ -10,7 +9,7 @@ internal sealed class ToggleCollisions
     private const string Id = "ToggleCollisions";
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ToggleCollisions"/> class.
+    ///     Initializes a new instance of the <see cref="ToggleCollisions" /> class.
     /// </summary>
     /// <param name="api">The Iconic Framework API.</param>
     public ToggleCollisions(IIconicFrameworkApi api)
@@ -26,7 +25,7 @@ internal sealed class ToggleCollisions
             Game1.player.ignoreCollisions = !Game1.player.ignoreCollisions;
             if (Game1.player.ignoreCollisions)
             {
-                Log.Alert(I18n.Button_NoClip_On(), HUDMessage.error_type);
+                Log.Alert(I18n.Button_NoClip_On());
                 return;
             }
 

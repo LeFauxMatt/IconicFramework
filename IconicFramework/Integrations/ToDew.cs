@@ -1,10 +1,9 @@
 namespace LeFauxMods.IconicFramework.Integrations;
 
 using System.Reflection;
-using LeFauxMods.Core.Integrations.IconicFramework;
-using LeFauxMods.IconicFramework.Utilities;
 using Microsoft.Xna.Framework;
 using StardewValley.Menus;
+using Utilities;
 
 /// <summary>Mod integration with ToDew.</summary>
 internal sealed class ToDew
@@ -12,7 +11,7 @@ internal sealed class ToDew
     private const string Id = "jltaylor-us.ToDew";
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ToDew"/> class.
+    ///     Initializes a new instance of the <see cref="ToDew" /> class.
     /// </summary>
     /// <param name="api">The Iconic Framework API.</param>
     public ToDew(IIconicFrameworkApi api)

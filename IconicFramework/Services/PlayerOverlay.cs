@@ -1,12 +1,8 @@
 namespace LeFauxMods.IconicFramework.Services;
 
-using System.Collections.Generic;
-using LeFauxMods.Core.Integrations.IconicFramework;
-using LeFauxMods.Core.Integrations.RadialMenu;
-using LeFauxMods.Core.Utilities;
-using LeFauxMods.IconicFramework.Models;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Models;
 
 internal sealed class PlayerOverlay : IRadialMenuPageFactory, IRadialMenuPage
 {
@@ -72,7 +68,8 @@ internal sealed class PlayerOverlay : IRadialMenuPageFactory, IRadialMenuPage
                 () =>
                 {
                     this.SelectedItemIndex = count;
-                    EventBus.Publish<IIconPressedEventArgs, IconPressedEventArgs>(new IconPressedEventArgs(id, SButton.MouseLeft));
+                    EventBus.Publish<IIconPressedEventArgs, IconPressedEventArgs>(
+                        new IconPressedEventArgs(id, SButton.MouseLeft));
                 });
 
             this.items.Add(menuItem);
@@ -81,7 +78,12 @@ internal sealed class PlayerOverlay : IRadialMenuPageFactory, IRadialMenuPage
         this.radialMenu.Api.InvalidatePage(this.manifest, "icons");
     }
 
-    private class MenuItem(string uniqueId, string? hoverText, Texture2D texture, Rectangle? sourceRect, Action onSelect) : IRadialMenuItem
+    private class MenuItem(
+        string uniqueId,
+        string? hoverText,
+        Texture2D texture,
+        Rectangle? sourceRect,
+        Action onSelect) : IRadialMenuItem
     {
         public string Description { get; } = string.Empty;
         public Rectangle? SourceRectangle { get; } = sourceRect;
@@ -89,7 +91,8 @@ internal sealed class PlayerOverlay : IRadialMenuPageFactory, IRadialMenuPage
         public string Title { get; } = hoverText ?? string.Empty;
         public string UniqueId { get; } = uniqueId;
 
-        public MenuItemActivationResult Activate(Farmer who, DelayedActions delayedActions, MenuItemAction requestedAction)
+        public MenuItemActivationResult Activate(Farmer who, DelayedActions delayedActions,
+            MenuItemAction requestedAction)
         {
             if (delayedActions != DelayedActions.None)
             {

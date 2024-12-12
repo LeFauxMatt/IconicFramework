@@ -1,15 +1,10 @@
 namespace LeFauxMods.IconicFramework.Services;
 
-using System;
-using System.Collections.Generic;
-using LeFauxMods.Core.Integrations.IconicFramework;
-using LeFauxMods.Core.Services;
-using LeFauxMods.Core.Utilities;
-using LeFauxMods.IconicFramework.Models;
-using LeFauxMods.IconicFramework.Utilities;
 using Microsoft.Xna.Framework;
+using Models;
+using Utilities;
 
-/// <inheritdoc/>
+/// <inheritdoc />
 public sealed class ModApi : IIconicFrameworkApi
 {
     private readonly EventManager eventManager = new();
@@ -19,7 +14,7 @@ public sealed class ModApi : IIconicFrameworkApi
     private EventHandler<string>? toolbarIconPressed;
 
     /// <summary>
-    /// Creates a new instance of the <see cref="ModApi"/> class.
+    ///     Creates a new instance of the <see cref="ModApi" /> class.
     /// </summary>
     /// <param name="mod"></param>
     /// <param name="icons"></param>
@@ -48,7 +43,7 @@ public sealed class ModApi : IIconicFrameworkApi
         remove => this.toolbarIconPressed -= value;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void AddToolbarIcon(string id, string texturePath, Rectangle? sourceRect, string? hoverText)
     {
         var uniqueId = $"{this.mod.Manifest.UniqueID}-{id}";
@@ -61,7 +56,7 @@ public sealed class ModApi : IIconicFrameworkApi
         EventBus.Publish(ModSignal.IconsChanged);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void AddToolbarIcon(IIcon icon, string? hoverText)
     {
         if (!this.ids.TryAdd(icon.UniqueId, icon.Id))
@@ -72,7 +67,7 @@ public sealed class ModApi : IIconicFrameworkApi
         this.icons.Add(icon.UniqueId, new Icon(icon.UniqueId, icon.Path, icon.Area, hoverText));
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void RemoveToolbarIcon(string id)
     {
         var uniqueId = $"{this.mod.Manifest.UniqueID}-{id}";
@@ -86,7 +81,7 @@ public sealed class ModApi : IIconicFrameworkApi
         EventBus.Publish(ModSignal.IconsChanged);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void RemoveToolbarIcon(IIcon icon)
     {
         if (!this.ids.ContainsKey(icon.UniqueId))
@@ -99,10 +94,10 @@ public sealed class ModApi : IIconicFrameworkApi
         EventBus.Publish(ModSignal.IconsChanged);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void Subscribe(Action<IIconPressedEventArgs> handler) => this.eventManager.Subscribe(handler);
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void Unsubscribe(Action<IIconPressedEventArgs> handler) => this.eventManager.Unsubscribe(handler);
 
     private void OnIconPressed(IIconPressedEventArgs e)

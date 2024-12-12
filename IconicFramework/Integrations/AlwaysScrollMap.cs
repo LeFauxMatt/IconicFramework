@@ -1,8 +1,7 @@
 namespace LeFauxMods.IconicFramework.Integrations;
 
-using LeFauxMods.Core.Integrations.IconicFramework;
-using LeFauxMods.IconicFramework.Utilities;
 using Microsoft.Xna.Framework;
+using Utilities;
 
 /// <summary>Mod integration with Always Scroll Map.</summary>
 internal sealed class AlwaysScrollMap
@@ -10,7 +9,7 @@ internal sealed class AlwaysScrollMap
     private const string Id = "bcmpinc.AlwaysScrollMap";
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AlwaysScrollMap"/> class.
+    ///     Initializes a new instance of the <see cref="AlwaysScrollMap" /> class.
     /// </summary>
     /// <param name="api">The Iconic Framework API.</param>
     /// <param name="reflection">Dependency used for reflecting into non-public code.</param>

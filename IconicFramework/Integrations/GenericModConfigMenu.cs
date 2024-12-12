@@ -1,8 +1,7 @@
 namespace LeFauxMods.IconicFramework.Integrations;
 
-using LeFauxMods.Core.Integrations.IconicFramework;
-using LeFauxMods.IconicFramework.Utilities;
 using Microsoft.Xna.Framework;
+using Utilities;
 
 /// <summary>Mod integration with Generic Mod Config Menu.</summary>
 internal sealed class GenericModConfigMenu
@@ -10,7 +9,7 @@ internal sealed class GenericModConfigMenu
     private const string Id = "spacechase0.GenericModConfigMenu";
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="GenericModConfigMenu"/> class.
+    ///     Initializes a new instance of the <see cref="GenericModConfigMenu" /> class.
     /// </summary>
     /// <param name="api">The Iconic Framework API.</param>
     /// <param name="reflection">Dependency used for reflecting into non-public code.</param>
@@ -32,7 +31,7 @@ internal sealed class GenericModConfigMenu
         {
             if (e.Id == Id)
             {
-                method.Invoke([0]);
+                method.Invoke(0);
             }
         });
     }

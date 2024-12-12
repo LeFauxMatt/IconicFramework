@@ -1,6 +1,5 @@
 namespace LeFauxMods.IconicFramework.Integrations;
 
-using LeFauxMods.Core.Integrations.IconicFramework;
 using Microsoft.Xna.Framework;
 using StardewValley.Menus;
 
@@ -10,7 +9,7 @@ internal sealed class SpecialOrders
     private const string Id = "SpecialOrders";
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SpecialOrders"/> class.
+    ///     Initializes a new instance of the <see cref="SpecialOrders" /> class.
     /// </summary>
     /// <param name="api">The Iconic Framework API.</param>
     public SpecialOrders(IIconicFrameworkApi api)

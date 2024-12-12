@@ -3,7 +3,7 @@ namespace LeFauxMods.IconicFramework.Models;
 using Microsoft.Xna.Framework;
 
 /// <summary>
-/// Creates a new instance of the <see cref="Icon"/> class.
+///     Creates a new instance of the <see cref="Icon" /> class.
 /// </summary>
 /// <param name="uniqueId">The icon's unique id.</param>
 /// <param name="texturePath">The path to the texture icon.</param>

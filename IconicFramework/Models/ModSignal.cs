@@ -1,7 +1,7 @@
 namespace LeFauxMods.IconicFramework.Models;
 
 /// <summary>
-/// Signals for mod communication.
+///     Signals for mod communication.
 /// </summary>
 internal enum ModSignal
 {
@@ -9,5 +9,5 @@ internal enum ModSignal
     ConfigChanged,
 
     /// <summary>Icons were added or removed.</summary>
-    IconsChanged,
+    IconsChanged
 }

@@ -1,8 +1,7 @@
 namespace LeFauxMods.IconicFramework.Integrations;
 
-using LeFauxMods.Core.Integrations.IconicFramework;
-using LeFauxMods.IconicFramework.Utilities;
 using Microsoft.Xna.Framework;
+using Utilities;
 
 /// <summary>Mod integration with Stardew Aquarium.</summary>
 internal sealed class StardewAquarium
@@ -10,7 +9,7 @@ internal sealed class StardewAquarium
     private const string Id = "Cherry.StardewAquarium";
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="StardewAquarium"/> class.
+    ///     Initializes a new instance of the <see cref="StardewAquarium" /> class.
     /// </summary>
     /// <param name="api">The Iconic Framework API.</param>
     /// <param name="reflection">Dependency used for reflecting into non-public code.</param>
@@ -32,7 +31,7 @@ internal sealed class StardewAquarium
         {
             if (e.Id == Id)
             {
-                method.Invoke(["aquariumprogress", Array.Empty<string>()]);
+                method.Invoke("aquariumprogress", Array.Empty<string>());
             }
         });
     }

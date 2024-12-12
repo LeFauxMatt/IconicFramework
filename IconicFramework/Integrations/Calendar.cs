@@ -1,6 +1,5 @@
 namespace LeFauxMods.IconicFramework.Integrations;
 
-using LeFauxMods.Core.Integrations.IconicFramework;
 using Microsoft.Xna.Framework;
 using StardewValley.Menus;
 
@@ -10,7 +9,7 @@ internal sealed class Calendar
     private const string Id = "Calendar";
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Calendar"/> class.
+    ///     Initializes a new instance of the <see cref="Calendar" /> class.
     /// </summary>
     /// <param name="api">The Iconic Framework API.</param>
     public Calendar(IIconicFrameworkApi api)

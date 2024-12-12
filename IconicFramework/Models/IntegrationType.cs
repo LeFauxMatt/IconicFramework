@@ -14,5 +14,5 @@ internal enum IntegrationType
     Method,
 
     /// <summary>Issue a keybind.</summary>
-    Keybind,
+    Keybind
 }

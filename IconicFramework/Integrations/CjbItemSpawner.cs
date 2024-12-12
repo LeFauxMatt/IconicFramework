@@ -1,9 +1,8 @@
 namespace LeFauxMods.IconicFramework.Integrations;
 
-using LeFauxMods.Core.Integrations.IconicFramework;
-using LeFauxMods.IconicFramework.Utilities;
 using Microsoft.Xna.Framework;
 using StardewValley.Menus;
+using Utilities;
 
 /// <summary>Mod integration with CJB Item Spawner.</summary>
 internal sealed class CjbItemSpawner
@@ -11,7 +10,7 @@ internal sealed class CjbItemSpawner
     private const string Id = "CJBok.ItemSpawner";
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="CjbItemSpawner"/> class.
+    ///     Initializes a new instance of the <see cref="CjbItemSpawner" /> class.
     /// </summary>
     /// <param name="api">The Iconic Framework API.</param>
     /// <param name="reflection">Dependency used for reflecting into non-public code.</param>
