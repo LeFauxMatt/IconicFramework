@@ -1,6 +1,7 @@
 namespace LeFauxMods.IconicFramework;
 
 using System;
+using LeFauxMods.Core.Utilities;
 using LeFauxMods.IconicFramework.Integrations;
 using LeFauxMods.IconicFramework.Models;
 using LeFauxMods.IconicFramework.Services;

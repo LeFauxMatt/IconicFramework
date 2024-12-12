@@ -2,6 +2,7 @@ namespace LeFauxMods.IconicFramework.Services;
 
 using System.Globalization;
 using LeFauxMods.Core.Integrations.IconicFramework;
+using LeFauxMods.Core.Utilities;
 using LeFauxMods.IconicFramework.Models;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

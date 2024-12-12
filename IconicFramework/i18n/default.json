@@ -1,4 +1,5 @@
 {
+  // Config
   "config.customize-toolbar.name": "Customize Toolbar",
   "config.customize-toolbar.tooltip": "Turn icons on/off and change their order.",
   "config.move-up.tooltip": "Move icon up",
@@ -11,5 +12,19 @@
   "config.toggle-key.name": "Toggle Key",
   "config.toggle-key.tooltip": "The key that toggles the toolbar icons.",
   "config.visible.name": "Show Icons",
-  "config.visible.tooltip": "Show or hide the toolbar icons."
+  "config.visible.tooltip": "Show or hide the toolbar icons.",
+
+  // Icons
+  "button.AlwaysScrollMap": "Toggle Always Scroll Map",
+  "button.Calendar": "Check Calendar",
+  "button.CheatsMenu": "Open CJB Cheats Menu",
+  "button.DailyQuests": "Check Daily Quests",
+  "button.ItemSpawner": "Show CJB Item Spawner",
+  "button.GenericModConfigMenu": "Configure Mods",
+  "button.NoClip": "Toggle Collision",
+  "button.NoClip.On": "Collision Disabled",
+  "button.NoClip.Off": "Collision Enabled",
+  "button.StardewAquarium": "Stardew Aquarium Collection",
+  "button.ToDew": "Open To-Dew List",
+  "button.SpecialOrders": "Check Special Orders",
 }

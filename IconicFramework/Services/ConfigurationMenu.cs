@@ -1,6 +1,7 @@
 namespace LeFauxMods.IconicFramework.Services;
 
 using LeFauxMods.Core.Integrations.GenericModConfigMenu;
+using LeFauxMods.Core.Utilities;
 using LeFauxMods.IconicFramework.Models;
 
 internal sealed class ConfigurationMenu
@@ -12,7 +13,7 @@ internal sealed class ConfigurationMenu
 
     public ConfigurationMenu(IModHelper helper, ModConfig config, IManifest manifest)
     {
-        this.gmcm = new(helper.ModRegistry);
+        this.gmcm = new(manifest, helper.ModRegistry);
         this.helper = helper;
         this.config = config;
         this.manifest = manifest;

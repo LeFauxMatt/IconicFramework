@@ -38,7 +38,12 @@ internal sealed class ContentPack
 
             case IntegrationType.Keybind when IntegrationHelper.TryGetKeybindAction(data.ModId, data.ExtraData, out var action) && this.actions.TryAdd(id, action):
                 break;
-
+            case IntegrationType.Menu:
+                break;
+            case IntegrationType.Method:
+                break;
+            case IntegrationType.Keybind:
+                break;
             default:
                 Log.WarnOnce(
                     "Failed to add icon: {{ id: {0}, mod: {1}, type: {2}, description: {3} }}.",
