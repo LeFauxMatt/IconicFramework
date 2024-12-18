@@ -1,6 +1,6 @@
-# Toolbar Icons
+# Iconic Framework
 
-Framework for adding icons to the toolbar.
+Framework for adding shortcut icons to vanilla and mod functions.
 
 * [API](#api)
 * [Assets](#assets)
