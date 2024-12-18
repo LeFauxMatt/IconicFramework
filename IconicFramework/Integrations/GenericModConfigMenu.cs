@@ -27,13 +27,19 @@ internal sealed class GenericModConfigMenu
             return;
         }
 
-        api.AddToolbarIcon(Id, Constants.IconPath, new Rectangle(16, 0, 16, 16), I18n.Button_GenericModConfigMenu());
-        api.Subscribe(e =>
-        {
-            if (e.Id == Id)
+        api.AddToolbarIcon(
+            Id,
+            Constants.IconPath,
+            new Rectangle(16, 0, 16, 16),
+            I18n.Button_GenericModConfigMenu_Title,
+            I18n.Button_GenericModConfigMenu_Description);
+        api.Subscribe(
+            e =>
             {
-                method.Invoke(0);
-            }
-        });
+                if (e.Id == Id)
+                {
+                    method.Invoke(0);
+                }
+            });
     }
 }

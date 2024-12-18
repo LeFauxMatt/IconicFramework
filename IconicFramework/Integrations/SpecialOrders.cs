@@ -15,13 +15,19 @@ internal sealed class SpecialOrders
     /// <param name="api">The Iconic Framework API.</param>
     public SpecialOrders(IIconicFrameworkApi api)
     {
-        api.AddToolbarIcon(Id, Constants.IconPath, new Rectangle(64, 0, 16, 16), I18n.Button_SpecialOrders());
-        api.Subscribe(e =>
-        {
-            if (e.Id == Id)
+        api.AddToolbarIcon(
+            Id,
+            Constants.IconPath,
+            new Rectangle(64, 0, 16, 16),
+            I18n.Button_SpecialOrders_Title,
+            I18n.Button_SpecialOrders_Description);
+        api.Subscribe(
+            e =>
             {
-                Game1.activeClickableMenu = new SpecialOrdersBoard();
-            }
-        });
+                if (e.Id == Id)
+                {
+                    Game1.activeClickableMenu = new SpecialOrdersBoard();
+                }
+            });
     }
 }

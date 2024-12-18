@@ -9,9 +9,15 @@
           "ModId": "shekurika.EventLookup",
           "Type": "Keybind",
           "ExtraData": "{{EventLookupHotkey}}",
-          "HoverText": "{{i18n: button.EventLookup}}",
+          "Title": "{{i18n: button.EventLookup.title}}",
+          "HoverText": "{{i18n: button.EventLookup.description}}",
           "TexturePath": "furyx639.ToolbarIcons/Icons",
-          "SourceRect": { "X": 16, "Y": 32, "Width": 16, "Height": 16 }
+          "SourceRect": {
+            "X": 16,
+            "Y": 32,
+            "Width": 16,
+            "Height": 16
+          }
         }
       }
     }

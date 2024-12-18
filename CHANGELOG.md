@@ -1,10 +1,15 @@
 # Toolbar Icons Change Log
 
-## 2.9.0 (Unreleased)
+## 3.0.0 (December 17, 2024)
 
 ### Added
 
 * Added controller support using RadialMenu.
+
+### Changed
+
+* Added optional title to icons.
+* Allow icon texture/text to be updated.
 
 ## 2.8.2 (December 5, 2024)
 

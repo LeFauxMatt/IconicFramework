@@ -27,13 +27,19 @@ internal sealed class StardewAquarium
             return;
         }
 
-        api.AddToolbarIcon(Id, Constants.IconPath, new Rectangle(0, 0, 16, 16), I18n.Button_StardewAquarium());
-        api.Subscribe(e =>
-        {
-            if (e.Id == Id)
+        api.AddToolbarIcon(
+            Id,
+            Constants.IconPath,
+            new Rectangle(0, 0, 16, 16),
+            I18n.Button_StardewAquarium_Title,
+            I18n.Button_StardewAquarium_Description);
+        api.Subscribe(
+            e =>
             {
-                method.Invoke("aquariumprogress", Array.Empty<string>());
-            }
-        });
+                if (e.Id == Id)
+                {
+                    method.Invoke("aquariumprogress", Array.Empty<string>());
+                }
+            });
     }
 }

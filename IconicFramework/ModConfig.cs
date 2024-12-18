@@ -1,11 +1,12 @@
-namespace LeFauxMods.IconicFramework.Models;
+namespace LeFauxMods.IconicFramework;
 
+using Models;
 using StardewModdingAPI.Utilities;
 
 /// <summary>Represents the mod's configuration.</summary>
 internal sealed class ModConfig
 {
-    /// <summary>Gets or sets icon data.</summary>
+    /// <summary>Gets icon data.</summary>
     public List<IconConfig> Icons { get; set; } = [];
 
     /// <summary>Gets or sets the icon size.</summary>
@@ -25,4 +26,30 @@ internal sealed class ModConfig
 
     /// <summary>Gets or sets a value indicating whether icons should be visible.</summary>
     public bool Visible { get; set; } = true;
+
+    /// <summary>
+    ///     Copies the values from another instance of <see cref="ModConfig" />.
+    /// </summary>
+    /// <param name="other">The other config to copy to.</param>
+    public void CopyTo(ModConfig other)
+    {
+        other.Icons.Clear();
+        foreach (var iconConfig in this.Icons)
+        {
+            other.Icons.Add(
+                new IconConfig
+                {
+                    Id = iconConfig.Id,
+                    ShowRadial = iconConfig.ShowRadial,
+                    ShowToolbar = iconConfig.ShowToolbar
+                });
+        }
+
+        other.IconSize = this.IconSize;
+        other.IconSpacing = this.IconSpacing;
+        other.PlaySound = this.PlaySound;
+        other.ShowTooltip = this.ShowTooltip;
+        other.ToggleKey = this.ToggleKey;
+        other.Visible = this.Visible;
+    }
 }

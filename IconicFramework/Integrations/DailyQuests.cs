@@ -15,13 +15,19 @@ internal sealed class DailyQuests
     /// <param name="api">The Iconic Framework API.</param>
     public DailyQuests(IIconicFrameworkApi api)
     {
-        api.AddToolbarIcon(Id, Constants.IconPath, new Rectangle(0, 16, 16, 16), I18n.Button_DailyQuests());
-        api.Subscribe(e =>
-        {
-            if (e.Id == Id)
+        api.AddToolbarIcon(
+            Id,
+            Constants.IconPath,
+            new Rectangle(0, 16, 16, 16),
+            I18n.Button_DailyQuests_Title,
+            I18n.Button_DailyQuests_Description);
+        api.Subscribe(
+            e =>
             {
-                Game1.activeClickableMenu = new Billboard(true);
-            }
-        });
+                if (e.Id == Id)
+                {
+                    Game1.activeClickableMenu = new Billboard(true);
+                }
+            });
     }
 }

@@ -27,13 +27,19 @@ internal sealed class CjbCheatsMenu
             return;
         }
 
-        api.AddToolbarIcon(Id, "LooseSprites/Cursors", new Rectangle(346, 392, 8, 8), I18n.Button_CheatsMenu());
-        api.Subscribe(e =>
-        {
-            if (e.Id == Id)
+        api.AddToolbarIcon(
+            Id,
+            "LooseSprites/Cursors",
+            new Rectangle(346, 392, 8, 8),
+            I18n.Button_CheatsMenu_Title,
+            I18n.Button_CheatsMenu_Description);
+        api.Subscribe(
+            e =>
             {
-                method.Invoke(0, true);
-            }
-        });
+                if (e.Id == Id)
+                {
+                    method.Invoke(0, true);
+                }
+            });
     }
 }

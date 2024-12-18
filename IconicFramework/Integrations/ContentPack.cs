@@ -6,11 +6,10 @@ using Common.Utilities;
 using Models;
 using StardewModdingAPI.Events;
 using Utilities;
-using Log = Common.Utilities.Log;
 
 internal sealed class ContentPack
 {
-    private readonly Dictionary<string, Action> actions = [];
+    private readonly Dictionary<string, Action> actions = new(StringComparer.OrdinalIgnoreCase);
     private readonly IIconicFrameworkApi api;
     private readonly IModHelper helper;
 
@@ -31,56 +30,11 @@ internal sealed class ContentPack
         }
     }
 
-    private void AddIcon(string id, ContentPackData data)
-    {
-        switch (data.Type)
-        {
-            case IntegrationType.Menu
-                when IntegrationHelper.TryGetMenuAction(data.ModId, data.ExtraData, out var action) &&
-                     this.actions.TryAdd(id, action):
-                break;
-
-            case IntegrationType.Method
-                when IntegrationHelper.TryGetMethod(data.ModId, data.ExtraData, out var action) &&
-                     this.actions.TryAdd(id, action):
-                break;
-
-            case IntegrationType.Keybind
-                when IntegrationHelper.TryGetKeybindAction(data.ModId, data.ExtraData, out var action) &&
-                     this.actions.TryAdd(id, action):
-                break;
-            case IntegrationType.Menu:
-                break;
-            case IntegrationType.Method:
-                break;
-            case IntegrationType.Keybind:
-                break;
-            default:
-                Log.WarnOnce(
-                    "Failed to add icon: {{ id: {0}, mod: {1}, type: {2}, description: {3} }}.",
-                    id,
-                    data.ModId,
-                    data.Type.ToStringFast(),
-                    data.HoverText);
-
-                return;
-        }
-
-        Log.TraceOnce(
-            "Adding icon: {{ id: {0}, mod: {1}, type: {2}, description: {3} }}.",
-            id,
-            data.ModId,
-            data.Type.ToStringFast(),
-            data.HoverText);
-
-        this.api.AddToolbarIcon(id, data.TexturePath, data.SourceRect, data.HoverText);
-    }
-
     private void OnAssetsInvalidated(object? sender, AssetsInvalidatedEventArgs e)
     {
         if (e.NamesWithoutLocale.Any(assetName => assetName.IsEquivalentTo(Constants.DataPath)))
         {
-            this.ReloadIcons();
+            this.helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
         }
     }
 
@@ -94,12 +48,61 @@ internal sealed class ContentPack
         }
     }
 
+    private void OnUpdateTicked(object? sender, UpdateTickedEventArgs e)
+    {
+        this.helper.Events.GameLoop.UpdateTicked -= this.OnUpdateTicked;
+        this.ReloadIcons();
+    }
+
     private void ReloadIcons()
     {
         var content = this.helper.GameContent.Load<Dictionary<string, ContentPackData>>(Constants.DataPath);
         foreach (var (id, data) in content)
         {
-            this.AddIcon(id, data);
+            switch (data.Type)
+            {
+                case IntegrationType.Menu
+                    when IntegrationHelper.TryGetMenuAction(data.ModId, data.ExtraData, out var action) &&
+                         this.actions.TryAdd(id, action):
+                    break;
+
+                case IntegrationType.Method
+                    when IntegrationHelper.TryGetMethod(data.ModId, data.ExtraData, out var action) &&
+                         this.actions.TryAdd(id, action):
+                    break;
+
+                case IntegrationType.Keybind
+                    when IntegrationHelper.TryGetKeybindAction(data.ModId, data.ExtraData, out var action) &&
+                         this.actions.TryAdd(id, action):
+                    break;
+                case IntegrationType.Menu:
+                case IntegrationType.Method:
+                case IntegrationType.Keybind:
+                    break;
+                default:
+                    Log.WarnOnce(
+                        "Failed to add icon: {{ id: {0}, mod: {1}, type: {2}, description: {3} }}.",
+                        id,
+                        data.ModId,
+                        data.Type.ToStringFast(),
+                        data.HoverText);
+
+                    continue;
+            }
+
+            Log.TraceOnce(
+                "Adding icon: {{ id: {0}, mod: {1}, type: {2}, description: {3} }}.",
+                id,
+                data.ModId,
+                data.Type.ToStringFast(),
+                data.HoverText);
+
+            this.api.AddToolbarIcon(
+                id,
+                data.TexturePath,
+                data.SourceRect,
+                () => data.Title,
+                () => data.HoverText);
         }
     }
 }

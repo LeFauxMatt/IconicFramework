@@ -16,8 +16,8 @@ internal sealed class IntegrationHelper
         instance = this;
         this.modRegistry = modRegistry;
         this.reflection = reflection;
-        this.overrideButtonReflected = Game1.input.GetType().GetMethod("OverrideButton")
-                                       ?? throw new MethodAccessException("Unable to access OverrideButton");
+        this.overrideButtonReflected = Game1.input.GetType().GetMethod("OverrideButton") ??
+                                       throw new MethodAccessException("Unable to access OverrideButton");
     }
 
     /// <summary>Attempt to retrieve a keybind action.</summary>

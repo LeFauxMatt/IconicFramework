@@ -9,9 +9,15 @@
           "ModId": "Pathoschild.HorseFluteAnywhere",
           "Type": "Method",
           "ExtraData": "TryUseHorseFlute",
-          "HoverText": "{{i18n: button.HorseFluteAnywhere}}",
+          "Title": "{{i18n: button.HorseFluteAnywhere.title}}",
+          "HoverText": "{{i18n: button.HorseFluteAnywhere.description}}",
           "TexturePath": "furyx639.ToolbarIcons/Icons",
-          "SourceRect": { "X": 48, "Y": 32, "Width": 16, "Height": 16 }
+          "SourceRect": {
+            "X": 48,
+            "Y": 32,
+            "Width": 16,
+            "Height": 16
+          }
         }
       }
     }

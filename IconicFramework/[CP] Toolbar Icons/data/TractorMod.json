@@ -9,9 +9,15 @@
           "ModId": "Pathoschild.TractorMod",
           "Type": "Method",
           "ExtraData": "SummonTractor",
-          "HoverText": "{{i18n: button.TractorMod}}",
+          "Title": "{{i18n: button.TractorMod.title}}",
+          "HoverText": "{{i18n: button.TractorMod.description}}",
           "TexturePath": "furyx639.ToolbarIcons/Icons",
-          "SourceRect": { "X": 64, "Y": 48, "Width": 16, "Height": 16 }
+          "SourceRect": {
+            "X": 64,
+            "Y": 48,
+            "Width": 16,
+            "Height": 16
+          }
         }
       }
     }

@@ -15,13 +15,20 @@ internal sealed class Calendar
     /// <param name="api">The Iconic Framework API.</param>
     public Calendar(IIconicFrameworkApi api)
     {
-        api.AddToolbarIcon(Id, Constants.IconPath, new Rectangle(32, 16, 16, 16), I18n.Button_Calendar());
-        api.Subscribe(e =>
-        {
-            if (e.Id == Id)
+        api.AddToolbarIcon(
+            Id,
+            Constants.IconPath,
+            new Rectangle(32, 16, 16, 16),
+            I18n.Button_Calendar_Title,
+            I18n.Button_Calendar_Description);
+
+        api.Subscribe(
+            e =>
             {
-                Game1.activeClickableMenu = new Billboard();
-            }
-        });
+                if (e.Id == Id)
+                {
+                    Game1.activeClickableMenu = new Billboard();
+                }
+            });
     }
 }

@@ -19,6 +19,9 @@ internal sealed class ContentPackData
     /// <summary>Gets or sets the texture path.</summary>
     public string TexturePath { get; set; } = string.Empty;
 
+    /// <summary>Gets or sets the title.</summary>
+    public string Title { get; set; } = string.Empty;
+
     /// <summary>Gets or sets the integration type.</summary>
     public IntegrationType Type { get; set; }
 }

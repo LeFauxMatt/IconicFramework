@@ -8,11 +8,11 @@ using StardewValley.Menus;
 internal enum IntegrationType
 {
     /// <summary>Opens an <see cref="IClickableMenu" /> from the mod.</summary>
-    Menu,
+    Menu = 0,
 
     /// <summary>Invokes a method from the mod.</summary>
-    Method,
+    Method = 1,
 
     /// <summary>Issue a keybind.</summary>
-    Keybind
+    Keybind = 2
 }

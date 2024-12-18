@@ -30,26 +30,32 @@ internal sealed class ToDew
             return;
         }
 
-        api.AddToolbarIcon(Id, Constants.IconPath, new Rectangle(48, 16, 16, 16), I18n.Button_ToDew());
-        api.Subscribe(e =>
-        {
-            if (e.Id == Id)
+        api.AddToolbarIcon(
+            Id,
+            Constants.IconPath,
+            new Rectangle(48, 16, 16, 16),
+            I18n.Button_ToDew_Title,
+            I18n.Button_ToDew_Description);
+        api.Subscribe(
+            e =>
             {
-                var value = perScreenList.GetType().GetProperty("Value")?.GetValue(perScreenList);
-                if (value is null)
+                if (e.Id == Id)
                 {
-                    return;
-                }
+                    var value = perScreenList.GetType().GetProperty("Value")?.GetValue(perScreenList);
+                    if (value is null)
+                    {
+                        return;
+                    }
 
-                var action = toDoMenu.GetConstructor([modType, value.GetType()]);
-                if (action is null)
-                {
-                    return;
-                }
+                    var action = toDoMenu.GetConstructor([modType, value.GetType()]);
+                    if (action is null)
+                    {
+                        return;
+                    }
 
-                var menu = action.Invoke([mod, value]);
-                Game1.activeClickableMenu = (IClickableMenu)menu;
-            }
-        });
+                    var menu = action.Invoke([mod, value]);
+                    Game1.activeClickableMenu = (IClickableMenu)menu;
+                }
+            });
     }
 }

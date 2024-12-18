@@ -30,20 +30,27 @@ internal sealed class AlwaysScrollMap
         var enabledIndoors = reflection.GetField<bool>(config, "EnabledIndoors", false);
         var enabledOutdoors = reflection.GetField<bool>(config, "EnabledOutdoors", false);
 
-        api.AddToolbarIcon(Id, Constants.IconPath, new Rectangle(32, 16, 16, 16), I18n.Button_AlwaysScrollMap());
-        api.Subscribe(e =>
-        {
-            if (e.Id == Id)
+        api.AddToolbarIcon(
+            Id,
+            Constants.IconPath,
+            new Rectangle(32, 16, 16, 16),
+            I18n.Button_AlwaysScrollMap_Title,
+            I18n.Button_AlwaysScrollMap_Description);
+
+        api.Subscribe(
+            e =>
             {
-                if (Game1.currentLocation.IsOutdoors)
+                if (e.Id == Id)
                 {
-                    enabledOutdoors.SetValue(!enabledOutdoors.GetValue());
+                    if (Game1.currentLocation.IsOutdoors)
+                    {
+                        enabledOutdoors.SetValue(!enabledOutdoors.GetValue());
+                    }
+                    else
+                    {
+                        enabledIndoors.SetValue(!enabledIndoors.GetValue());
+                    }
                 }
-                else
-                {
-                    enabledIndoors.SetValue(!enabledIndoors.GetValue());
-                }
-            }
-        });
+            });
     }
 }

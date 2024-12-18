@@ -23,13 +23,19 @@ internal sealed class CjbItemSpawner
         }
 
         var buildMenu = reflection.GetMethod(mod, "BuildMenu", false);
-        api.AddToolbarIcon(Id, "LooseSprites/Cursors", new Rectangle(147, 412, 10, 11), I18n.Button_ItemSpawner());
-        api.Subscribe(e =>
-        {
-            if (e.Id == Id)
+        api.AddToolbarIcon(
+            Id,
+            "LooseSprites/Cursors",
+            new Rectangle(147, 412, 10, 11),
+            I18n.Button_ItemSpawner_Title,
+            I18n.Button_ItemSpawner_Description);
+        api.Subscribe(
+            e =>
             {
-                Game1.activeClickableMenu = buildMenu.Invoke<ItemGrabMenu>();
-            }
-        });
+                if (e.Id == Id)
+                {
+                    Game1.activeClickableMenu = buildMenu.Invoke<ItemGrabMenu>();
+                }
+            });
     }
 }

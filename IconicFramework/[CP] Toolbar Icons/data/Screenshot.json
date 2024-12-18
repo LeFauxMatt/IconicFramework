@@ -9,9 +9,15 @@
           "ModId": "aedenthorn.Screenshot",
           "Type": "Keybind",
           "ExtraData": "{{ScreenshotHotkey}}",
-          "HoverText": "{{i18n: button.Screenshot}}",
+          "Title": "{{i18n: button.Screenshot.title}}",
+          "HoverText": "{{i18n: button.Screenshot.description}}",
           "TexturePath": "furyx639.ToolbarIcons/Icons",
-          "SourceRect": { "X": 48, "Y": 48, "Width": 16, "Height": 16 }
+          "SourceRect": {
+            "X": 48,
+            "Y": 48,
+            "Width": 16,
+            "Height": 16
+          }
         }
       }
     }
