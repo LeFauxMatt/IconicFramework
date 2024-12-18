@@ -1,58 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="..\FauxCore\FauxCommon\Common.targets"/>
+  <Import Project="..\FauxCore\FauxCommon\FauxCommon.projitems" Label="Shared" />
+
   <PropertyGroup>
     <Name>Iconic Framework</Name>
-    <Description>Adds icons above or below the toolbar.</Description>
+    <Description>Adds shortcut icons to vanilla and mod functions.</Description>
     <Version>3.0.0</Version>
     <RootNamespace>LeFauxMods.IconicFramework</RootNamespace>
     <UniqueId>furyx639.ToolbarIcons</UniqueId>
-    <UpdateKeys>Nexus:11026@SMAPI</UpdateKeys>
-    <Authors>LeFauxMatt</Authors>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/LeFauxMatt/StardewMods</RepositoryUrl>
+    <UpdateKeys>Nexus:11026, CurseForge:871834, ModDrop:1547451, GitHub:LeFauxMatt/IconicFramework</UpdateKeys>
+    <RepositoryUrl>https://github.com/LeFauxMatt/IconicFramework</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <TargetFramework>net6.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
-    <BaseManifest>new</BaseManifest>
-    <MinimumGameVersion>1.6.14</MinimumGameVersion>
-    <MinimumApiVersion_Behavior>Update</MinimumApiVersion_Behavior>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <EnableModZip Condition="'$(Configuration)' == 'Debug'">False</EnableModZip>
-    <ModZipPath>$(SolutionDir)\releases</ModZipPath>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <WarningsAsErrors>Nullable</WarningsAsErrors>
-    <Version_AppendConfiguration>false</Version_AppendConfiguration>
   </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta11" />
-    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.3.2" />
     <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.2.0" />
-    <PackageReference Include="Leclair.Stardew.ModManifestBuilder" Version="2.4.0" />
-    <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>$(GamePath)\smapi-internal\Newtonsoft.Json.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <ProjectReference Include="..\CaseyMods\GenericModConfigMenu\GenericModConfigMenu.csproj">
-      <PrivateAssets>true</PrivateAssets>
-    </ProjectReference>
   </ItemGroup>
+
   <ItemGroup>
-    <SMAPIDependency Include="spacechase0.GenericModConfigMenu" Version="1.14.0" required="false" />
+    <SMAPIDependency Include="spacechase0.GenericModConfigMenu" Version="1.14.1" required="false" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="$(SolutionDir)\GlobalSuppressions.cs" Link="GlobalSuppressions.cs" />
-    <Using Include="JetBrains.Annotations" />
-    <Using Include="StardewValley" />
-    <Using Include="StardewModdingAPI" />
-    <Using Include="System.Diagnostics.CodeAnalysis" />
-    <Using Alias="Object" Include="System.Object" />
-    <Using Alias="SObject" Include="StardewValley.Object" />
+    <ContentPacks Include="[CP] Toolbar Icons" />
   </ItemGroup>
 
 </Project>

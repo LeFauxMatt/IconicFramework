@@ -6,12 +6,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IconicFramework", "IconicFr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
-		.gitignore = .gitignore
-		GlobalSuppressions.cs = GlobalSuppressions.cs
+		CHANGELOG.md = CHANGELOG.md
+		LICENSE.txt = LICENSE.txt
+		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenericModConfigMenu", "CaseyMods\GenericModConfigMenu\GenericModConfigMenu.csproj", "{2E541D9D-F4F8-9C78-2C0C-2F56D68085F5}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = ".Common", "FauxCore\FauxCommon\.Common.shproj", "{966B9495-8681-44DA-9F8E-0838E5EB1A42}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,6 @@ Global
 		{B68712A4-9C2B-4032-8EE6-D5374335BE07}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B68712A4-9C2B-4032-8EE6-D5374335BE07}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B68712A4-9C2B-4032-8EE6-D5374335BE07}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2E541D9D-F4F8-9C78-2C0C-2F56D68085F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2E541D9D-F4F8-9C78-2C0C-2F56D68085F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2E541D9D-F4F8-9C78-2C0C-2F56D68085F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2E541D9D-F4F8-9C78-2C0C-2F56D68085F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -35,7 +31,7 @@ Global
 		SolutionGuid = {8E5EB7F6-E0BC-4DBE-8CC7-A05F873F45F7}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		CaseyMods\SpaceShared.Common\SpaceShared.Common.projitems*{2e541d9d-f4f8-9c78-2c0c-2f56d68085f5}*SharedItemsImports = 5
-		CaseyMods\SpaceShared\SpaceShared.projitems*{2e541d9d-f4f8-9c78-2c0c-2f56d68085f5}*SharedItemsImports = 5
+		FauxCore\FauxCommon\FauxCommon.projitems*{966b9495-8681-44da-9f8e-0838e5eb1a42}*SharedItemsImports = 13
+		FauxCore\FauxCommon\FauxCommon.projitems*{b68712a4-9c2b-4032-8ee6-d5374335be07}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

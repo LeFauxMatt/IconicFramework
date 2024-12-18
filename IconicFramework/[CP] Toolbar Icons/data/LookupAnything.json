@@ -1,0 +1,25 @@
+{
+  "Changes": [
+    {
+      "LogName": "Toolbar Icon for LookupAnything.Search",
+      "Action": "EditData",
+      "Target": "furyx639.ToolbarIcons/Data",
+      "Entries": {
+        "{{ModId}}/LookupAnything.Search": {
+          "ModId": "Pathoschild.LookupAnything",
+          "Type": "Method",
+          "ExtraData": "TryToggleSearch",
+          "Title": "{{i18n: button.LookupAnything.title}}",
+          "HoverText": "{{i18n: button.LookupAnything.description}}",
+          "TexturePath": "furyx639.ToolbarIcons/Icons",
+          "SourceRect": {
+            "X": 16,
+            "Y": 48,
+            "Width": 16,
+            "Height": 16
+          }
+        }
+      }
+    }
+  ]
+}

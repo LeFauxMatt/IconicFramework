@@ -1,0 +1,39 @@
+{
+  "Changes": [
+    {
+      "LogName": "Toolbar Icon for InstantBuildings.Build,InstantBuildings.Upgrade",
+      "Action": "EditData",
+      "Target": "furyx639.ToolbarIcons/Data",
+      "Entries": {
+        "{{ModId}}/InstantBuildings.Build": {
+          "ModId": "BitwiseJonMods.InstantBuildings",
+          "Type": "Method",
+          "ExtraData": "HandleInstantBuildButtonClick",
+          "Title": "{{i18n: button.InstantBuildings.Build.title}}",
+          "HoverText": "{{i18n: button.InstantBuildings.Build.description}}",
+          "TexturePath": "furyx639.ToolbarIcons/Icons",
+          "SourceRect": {
+            "X": 64,
+            "Y": 32,
+            "Width": 16,
+            "Height": 16
+          }
+        },
+        "{{ModId}}/InstantBuildings.Upgrade": {
+          "ModId": "BitwiseJonMods.InstantBuildings",
+          "Type": "Method",
+          "ExtraData": "HandleInstantUpgradeButtonClick",
+          "Title": "{{i18n: button.InstantBuildings.Upgrade.title}}",
+          "HoverText": "{{i18n: button.InstantBuildings.Upgrade.description}}",
+          "TexturePath": "furyx639.ToolbarIcons/Icons",
+          "SourceRect": {
+            "X": 0,
+            "Y": 48,
+            "Width": 16,
+            "Height": 16
+          }
+        }
+      }
+    }
+  ]
+}
