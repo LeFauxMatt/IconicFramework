@@ -1,5 +1,11 @@
 # Toolbar Icons Change Log
 
+## 3.0.1 (Unreleased)
+
+### Fixed
+
+* Added back CJB Cheats Menu support.
+
 ## 3.0.0 (December 17, 2024)
 
 ### Added

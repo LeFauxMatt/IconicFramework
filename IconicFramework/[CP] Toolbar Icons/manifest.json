@@ -1,0 +1,23 @@
+{
+  "$schema": "https://smapi.io/schemas/manifest.json",
+  "UniqueID": "furyx639.ToolbarIconsCP",
+  "Name": "[CP] Toolbar Icons",
+  "Author": "furyx639",
+  "Version": "3.0.0",
+  "Description": "Adds toolbar icons as shortcuts to other popular mods.",
+  "ContentPackFor": {
+    "UniqueID": "Pathoschild.ContentPatcher"
+  },
+  "Dependencies": [
+    {
+      "UniqueID": "furyx639.ToolbarIcons",
+      "IsRequired": true
+    }
+  ],
+  "UpdateKeys": [
+    "Nexus:11026",
+    "CurseForge:871834",
+    "ModDrop:1547451",
+    "GitHub:LeFauxMatt/IconicFramework"
+  ]
+}

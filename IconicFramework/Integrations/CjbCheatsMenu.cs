@@ -38,7 +38,7 @@ internal sealed class CjbCheatsMenu
             {
                 if (e.Id == Id)
                 {
-                    method.Invoke(0, true);
+                    method.Invoke();
                 }
             });
     }
