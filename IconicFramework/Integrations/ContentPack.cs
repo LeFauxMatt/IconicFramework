@@ -1,11 +1,11 @@
-namespace LeFauxMods.IconicFramework.Integrations;
-
-using Common.Integrations.ContentPatcher;
-using Common.Integrations.IconicFramework;
-using Common.Utilities;
-using Models;
+using LeFauxMods.Common.Integrations.ContentPatcher;
+using LeFauxMods.Common.Integrations.IconicFramework;
+using LeFauxMods.Common.Utilities;
+using LeFauxMods.IconicFramework.Models;
+using LeFauxMods.IconicFramework.Utilities;
 using StardewModdingAPI.Events;
-using Utilities;
+
+namespace LeFauxMods.IconicFramework.Integrations;
 
 internal sealed class ContentPack
 {

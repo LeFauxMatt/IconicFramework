@@ -1,6 +1,6 @@
-namespace LeFauxMods.IconicFramework.Models;
+using LeFauxMods.Common.Integrations.IconicFramework;
 
-using Common.Integrations.IconicFramework;
+namespace LeFauxMods.IconicFramework.Models;
 
 /// <inheritdoc cref="IIconPressedEventArgs" />
 /// <summary>Initializes a new instance of the <see cref="IconPressedEventArgs" /> class.</summary>

@@ -1,12 +1,12 @@
-namespace LeFauxMods.IconicFramework;
-
-using Common.Integrations.IconicFramework;
-using Common.Models;
-using Common.Services;
-using Common.Utilities;
+using LeFauxMods.Common.Integrations.IconicFramework;
+using LeFauxMods.Common.Models;
+using LeFauxMods.Common.Services;
+using LeFauxMods.Common.Utilities;
+using LeFauxMods.IconicFramework.Models;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Models;
+
+namespace LeFauxMods.IconicFramework;
 
 /// <inheritdoc />
 public sealed class ModApi : IIconicFrameworkApi

@@ -1,8 +1,8 @@
-namespace LeFauxMods.IconicFramework.Integrations;
-
-using Common.Integrations.IconicFramework;
+using LeFauxMods.Common.Integrations.IconicFramework;
+using LeFauxMods.IconicFramework.Utilities;
 using Microsoft.Xna.Framework;
-using Utilities;
+
+namespace LeFauxMods.IconicFramework.Integrations;
 
 /// <summary>Mod integration with Generic Mod Config Menu.</summary>
 internal sealed class GenericModConfigMenu

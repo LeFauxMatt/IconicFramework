@@ -1,7 +1,7 @@
-namespace LeFauxMods.IconicFramework;
-
-using Models;
+using LeFauxMods.IconicFramework.Models;
 using StardewModdingAPI.Utilities;
+
+namespace LeFauxMods.IconicFramework;
 
 /// <summary>Represents the mod's configuration.</summary>
 internal sealed class ModConfig

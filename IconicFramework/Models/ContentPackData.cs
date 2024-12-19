@@ -1,6 +1,6 @@
-namespace LeFauxMods.IconicFramework.Models;
-
 using Microsoft.Xna.Framework;
+
+namespace LeFauxMods.IconicFramework.Models;
 
 internal sealed class ContentPackData
 {

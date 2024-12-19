@@ -1,15 +1,15 @@
-namespace LeFauxMods.IconicFramework.Services;
-
-using Common.Integrations.GenericModConfigMenu;
-using Common.Models;
-using Common.Services;
-using Common.Utilities;
+using LeFauxMods.Common.Integrations.GenericModConfigMenu;
+using LeFauxMods.Common.Models;
+using LeFauxMods.Common.Services;
+using LeFauxMods.Common.Utilities;
+using LeFauxMods.IconicFramework.Models;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Models;
 using StardewModdingAPI.Events;
 using StardewValley.BellsAndWhistles;
 using StardewValley.Menus;
+
+namespace LeFauxMods.IconicFramework.Services;
 
 /// <summary>Generic mod config menu integration.</summary>
 internal sealed class ConfigMenu

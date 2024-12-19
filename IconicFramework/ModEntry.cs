@@ -1,14 +1,14 @@
-namespace LeFauxMods.IconicFramework;
-
-using Common.Integrations.RadialMenu;
-using Common.Services;
-using Common.Utilities;
-using Integrations;
-using Models;
-using Services;
+using LeFauxMods.Common.Integrations.RadialMenu;
+using LeFauxMods.Common.Services;
+using LeFauxMods.Common.Utilities;
+using LeFauxMods.IconicFramework.Integrations;
+using LeFauxMods.IconicFramework.Models;
+using LeFauxMods.IconicFramework.Services;
+using LeFauxMods.IconicFramework.Utilities;
 using StardewModdingAPI.Events;
 using StardewValley.Menus;
-using Utilities;
+
+namespace LeFauxMods.IconicFramework;
 
 /// <inheritdoc />
 internal sealed class ModEntry : Mod
