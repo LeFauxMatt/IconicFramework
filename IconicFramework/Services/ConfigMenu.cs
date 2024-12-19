@@ -82,7 +82,9 @@ internal sealed class ConfigMenu
 
     private void OnRenderedActiveMenu(object? sender, RenderedActiveMenuEventArgs e)
     {
-        if (!this.gmcm.IsLoaded || !this.gmcm.Api.TryGetCurrentMenu(out _, out _))
+        if (!this.gmcm.IsLoaded ||
+            !this.gmcm.Api.TryGetCurrentMenu(out var mod, out _) ||
+            !mod.UniqueID.Equals(Constants.ModId, StringComparison.OrdinalIgnoreCase))
         {
             return;
         }
@@ -96,7 +98,9 @@ internal sealed class ConfigMenu
 
     private void OnRenderingActiveMenu(object? sender, RenderingActiveMenuEventArgs e)
     {
-        if (!this.gmcm.IsLoaded || !this.gmcm.Api.TryGetCurrentMenu(out _, out _))
+        if (!this.gmcm.IsLoaded ||
+            !this.gmcm.Api.TryGetCurrentMenu(out var mod, out _) ||
+            !mod.UniqueID.Equals(Constants.ModId, StringComparison.OrdinalIgnoreCase))
         {
             return;
         }

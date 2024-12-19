@@ -5,6 +5,7 @@
 ### Fixed
 
 * Added back CJB Cheats Menu support.
+* Prevent drawing tooltips over cutscenes.
 
 ## 3.0.0 (December 17, 2024)
 
