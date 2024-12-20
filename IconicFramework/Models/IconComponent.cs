@@ -50,8 +50,14 @@ internal sealed class IconComponent(
             return MenuItemActivationResult.Delayed;
         }
 
+        var button = requestedAction switch
+        {
+            MenuItemAction.Select => SButton.ControllerA,
+            MenuItemAction.Use => SButton.ControllerB
+        };
+
         ModEvents.Publish<IIconPressedEventArgs, IconPressedEventArgs>(
-            new IconPressedEventArgs(this.name, SButton.MouseLeft));
+            new IconPressedEventArgs(this.name, button));
 
         return MenuItemActivationResult.Selected;
     }

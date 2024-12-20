@@ -2,129 +2,73 @@
 
 Framework for adding shortcut icons to vanilla and mod functions.
 
-* [API](#api)
-* [Assets](#assets)
-* [Integrations](#integrations)
-* [Translations](#translations)
-* [Credits](#credits)
+- [Iconic Framework](#iconic-framework)
+  - [API](#api)
+  - [Assets](#assets)
+    - [Menu](#menu)
+    - [Method](#method)
+    - [Keybind](#keybind)
+  - [Translations](#translations)
+  - [Credits](#credits)
 
 ## API
 
-Add toolbar icons using
-the [Toolbar Icons API](../Common/Integrations/ToolbarIcons/IToolbarIconsApi.cs).
+Direct integration using
+the [Iconic Framework
+API](https://github.com/LeFauxMatt/FauxCore/blob/develop/FauxCommon/Integrations/IconicFramework/IIconicFrameworkApi.cs)
+is preferred.
 
 ## Assets
 
-Integration is possible via data paths using
+External integration is possible using data paths with
 [SMAPI](https://stardewvalleywiki.com/Modding:Modder_Guide/APIs/Content#Edit_a_game_asset)
 or
 [Content Patcher](https://github.com/Pathoschild/StardewMods/blob/develop/ContentPatcher/docs/author-guide.md).
 
-`furyx639.ToolbarIcons/Toolbar`
+You can find examples in the [\[CP\] Toolbar Icons](<IconicFramework/[CP] Toolbar Icons/>) folder.
 
-Sample `content.json`:
+The data model is as follows:
 
-```jsonc
-{
-  "Format": "1.24.0",
-  "ConfigSchema": {
-    "EventLookupHotkey": {
-      "AllowBlank": true,
-      "Default": "N"
-    }
-  },
-  "Changes": [
-    // Load Texture Icons
-    {
-      "Action": "Load",
-      "Target": "example.ModId/Icons",
-      "FromFile": "assets/icon.png"
-    },
+| Entry       | Description                                                 |
+| :---------- | :---------------------------------------------------------- |
+| ModId       | The mod that the icon is for.                               |
+| Type        | Menu, Method, or Keybind                                    |
+| ExtraData   | Additional data depending on integration type (see below)   |
+| Title       | The title text to display when hovering over an icon.       |
+| HoverText   | The description text to display when hovering over an icon. |
+| TexturePath | The path to the icon's texture.                             |
+| SourceRect  | The source area of the icon's texture.                      |
 
-    // Add Event Lookup Icon using Keybind
-    {
-      "Action": "EditData",
-      "Target": "furyx639.ToolbarIcons/Toolbar",
-      "Entries": {
-        "shekurika.EventLookup/LookupEvents": "{{i18n: button.EventLookup}}/example.ModId\\Icons/0/keybind/{{EventLookupHotkey}}"
-      },
-      "When": {
-        "HasMod": "shekurika.EventLookup"
-      }
-    },
+### Menu
 
-    // Add Lookup Anything Icon using method
-    {
-      "Action": "EditData",
-      "Target": "furyx639.ToolbarIcons/Toolbar",
-      "Entries": {
-        "Pathoschild.LookupAnything/ToggleSearch": "{{i18n: button.LookupAnything}/example.ModId\\Icons/1/method/TryToggleSearch"
-      },
-      "When": {
-        "HasMod": "Pathoschild.LookupAnything"
-      }
-    },
+ExtraData requires the fully qualified name of the Menu class. It must have a parameterless constructor.
 
-    // Replace texture for Stardew Aquarium icon
-    {
-      "Action": "EditImage",
-      "Target": "furyx639.ToolbarIcons/Icons",
-      "FromFile": "assets/aquarium-icon.png",
-      "FromArea": {"X": 0, "Y": 0, "Width": 16, "Height": 16},
-      "ToArea" {"X": 16, "Y": 0, "Width": 16, "Height": 16}
-    }
-  ]
-}
-```
+### Method
 
-The data entry is as follows:
+ExtraData requires the fully qualified name of the Method. It must be a
+parameterless method.
 
-| Entry              | Description                                                     |
-|:-------------------|:----------------------------------------------------------------|
-| Hover Text         | The text to display when hovering over an icon.<sup>1</sup>     |
-| Texture Path       | Path to the icon texture.<sup>2</sup>                           |
-| Texture Index      | The position of the texture for this icon.<sup>3</sup>          |
-| Integration Type   | The type of action for this icon.<sup>4</sup>                   |
-| Integration Params | Additional parameters depending on the action type.<sup>5</sup> |                                                                           |
+### Keybind
 
-1. Preferably localized text describing the icon's action.
-2. Path must be to a loaded texture asset.
-3. Index goes from left to right for each 16x16 icon.
-4. Supported actions are `method` or `keybind`.
-5. Parameters depend on the action type:
-    * `method` the method name, such as `TryToggleSearch`
-    * `keybind` must include one or more buttons, such as `B`
-
-## Integrations
-
-Some integrations are handled directly by the Toolbar Icons mod which means
-icons are automatically added for them.
-
-### Supported mods
-
-* [Always Scroll Map](https://www.nexusmods.com/stardewvalley/mods/2733)
-* [CJB Cheats Menu](https://www.nexusmods.com/stardewvalley/mods/4)
-* [CJB Item Spawner](https://www.nexusmods.com/stardewvalley/mods/93)
-* [Dynamic Game Assets](https://www.nexusmods.com/stardewvalley/mods/9365)
-* [Generic Mod Config Menu](https://www.nexusmods.com/stardewvalley/mods/5098)
-* [Stardew Aquarium](https://www.nexusmods.com/stardewvalley/mods/6372)
-* [To-Dew](https://www.nexusmods.com/stardewvalley/mods/7409)
+ExtraData requires the keybind.
 
 ## Translations
 
-| Language               | Status            | Credits  |
-|:-----------------------|:------------------|:---------|
-| Chinese                | ❌️ Not Translated |          |
-| [French](i18n/fr.json) | ✔️ Complete        | CaranudLapin |
-| German                 | ❌️ Not Translated |          |
-| Hungarian              | ❌️ Not Translated |          |
-| Italian                | ❌️ Not Translated |          |
-| Japanese               | ❌️ Not Translated |          |
-| [Korean](i18n/ko.json) | ❔ Incomplete      | wally232 |
-| Portuguese]            | ❌️ Not Translated |          |
-| Russian                | ❌️ Not Translated |          |
-| Spanish                | ❌️ Not Translated |          |
-| Turkish                | ❌️ Not Translated |          |
+❌️ = Not Translated, ❔ = Incomplete, ✔️ = Complete
+
+|            |         Iconic Framework          |                   [CP] Toolbar Icons                   |
+| :--------- | :-------------------------------: | :----------------------------------------------------: |
+| Chinese    | [❌️](IconicFramework/i18n/zh.json) | [❌️](<IconicFramework/[CP] Toolbar Icons/i18n/zh.json>) |
+| French     | [❌️](IconicFramework/i18n/fr.json) | [❌️](<IconicFramework/[CP] Toolbar Icons/i18n/fr.json>  |
+| German     | [❌️](IconicFramework/i18n/de.json) | [❌️](<IconicFramework/[CP] Toolbar Icons/i18n/de.json>  |
+| Hungarian  | [❌️](IconicFramework/i18n/hu.json) | [❌️](<IconicFramework/[CP] Toolbar Icons/i18n/hu.json>  |
+| Italian    | [❌️](IconicFramework/i18n/it.json) | [❌️](<IconicFramework/[CP] Toolbar Icons/i18n/it.json>  |
+| Japanese   | [❌️](IconicFramework/i18n/ja.json) | [❌️](<IconicFramework/[CP] Toolbar Icons/i18n/ja.json>  |
+| Korean     | [❌️](IconicFramework/i18n/ko.json) | [❔](<IconicFramework/[CP] Toolbar Icons/i18n/ko.json>) |
+| Portuguese | [❌️](IconicFramework/i18n/pt.json) | [❌️](<IconicFramework/[CP] Toolbar Icons/i18n/pt.json>  |
+| Russian    | [❌️](IconicFramework/i18n/ru.json) | [❌️](<IconicFramework/[CP] Toolbar Icons/i18n/ru.json>  |
+| Spanish    | [❌️](IconicFramework/i18n/es.json) | [❌️](<IconicFramework/[CP] Toolbar Icons/i18n/es.json>  |
+| Turkish    | [❌️](IconicFramework/i18n/tr.json) | [❌️](<IconicFramework/[CP] Toolbar Icons/i18n/tr.json>  |
 
 ## Credits
 

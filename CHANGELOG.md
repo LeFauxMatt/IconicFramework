@@ -2,6 +2,18 @@
 
 ## 3.0.1 (Unreleased)
 
+### Added
+
+* Added support for secondary actions on Right Click or Controller B.
+
+### Changed
+
+* Only add special orders board icon if the board is unlocked.
+* Added a secondary action for the special orders board icon.
+    * Launches the Qi Quest Board. 
+* Added a secondary action for the generic mod config menu icon.
+    * Launches the config menu for Iconic Framework.
+
 ### Fixed
 
 * Added back CJB Cheats Menu support.

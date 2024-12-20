@@ -6,7 +6,10 @@ namespace LeFauxMods.IconicFramework;
 /// <summary>Represents the mod's configuration.</summary>
 internal sealed class ModConfig
 {
-    /// <summary>Gets icon data.</summary>
+    /// <summary>Gets or sets a value indicating whether secondary actions are enabled.</summary>
+    public bool EnableSecondary { get; set; } = true;
+
+    /// <summary>Gets or sets the icon data.</summary>
     public List<IconConfig> Icons { get; set; } = [];
 
     /// <summary>Gets or sets the icon size.</summary>
@@ -45,6 +48,7 @@ internal sealed class ModConfig
                 });
         }
 
+        other.EnableSecondary = this.EnableSecondary;
         other.IconSize = this.IconSize;
         other.IconSpacing = this.IconSpacing;
         other.PlaySound = this.PlaySound;

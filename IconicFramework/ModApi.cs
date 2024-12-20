@@ -133,7 +133,18 @@ public sealed class ModApi : IIconicFrameworkApi
             return;
         }
 
-        this.eventManager.Publish<IIconPressedEventArgs, IconPressedEventArgs>(new IconPressedEventArgs(id, e.Button));
+        var button = e.Button switch
+        {
+            SButton.MouseLeft => SButton.MouseLeft,
+            SButton.ControllerA => SButton.ControllerA,
+            SButton.MouseRight when this.config.EnableSecondary => SButton.MouseRight,
+            SButton.ControllerB when this.config.EnableSecondary => SButton.ControllerB,
+            SButton.ControllerB => SButton.ControllerA,
+            _ => SButton.MouseLeft
+        };
+
+        var iconPressedEventArgs = new IconPressedEventArgs(id, button);
+        this.eventManager.Publish<IIconPressedEventArgs, IconPressedEventArgs>(iconPressedEventArgs);
         if (this.toolbarIconPressed is null)
         {
             return;

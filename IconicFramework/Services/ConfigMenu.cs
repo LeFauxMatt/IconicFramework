@@ -29,11 +29,12 @@ internal sealed class ConfigMenu
         IManifest manifest,
         ModConfig config,
         ConfigHelper<ModConfig> configHelper,
+        GenericModConfigMenuIntegration gmcm,
         Dictionary<string, IconComponent> icons)
     {
         this.helper = helper;
         this.manifest = manifest;
-        this.gmcm = new GenericModConfigMenuIntegration(manifest, helper.ModRegistry);
+        this.gmcm = gmcm;
         this.config = config;
         this.configHelper = configHelper;
         this.icons = icons;
@@ -159,6 +160,13 @@ internal sealed class ConfigMenu
             value => this.tempConfig.ToggleKey = value,
             I18n.Config_ToggleKey_Name,
             I18n.Config_ToggleKey_Tooltip);
+
+        api.AddBoolOption(
+            this.manifest,
+            () => this.tempConfig.EnableSecondary,
+            value => this.tempConfig.EnableSecondary = value,
+            I18n.Config_EnableSecondary_Name,
+            I18n.Config_EnableSecondary_Tooltip);
 
         api.AddBoolOption(
             this.manifest,
