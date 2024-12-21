@@ -1,3 +1,4 @@
+using LeFauxMods.Common.Integrations.ContentPatcher;
 using LeFauxMods.Common.Integrations.GenericModConfigMenu;
 using LeFauxMods.Common.Integrations.RadialMenu;
 using LeFauxMods.Common.Services;
@@ -44,27 +45,19 @@ internal sealed class ModEntry : Mod
         themeHelper.AddAsset(Constants.IconPath, helper.ModContent.Load<IRawTextureData>("assets/icons.png"));
         themeHelper.AddAsset(Constants.UiPath, helper.ModContent.Load<IRawTextureData>("assets/ui.png"));
 
-        // Integrations
-        var modInfo = this.Helper.ModRegistry.Get(this.ModManifest.UniqueID)!;
-        var api = new ModApi(modInfo, helper, this.config, this.icons);
-        _ = new IntegrationHelper(helper.ModRegistry, this.Helper.Reflection);
-        _ = new AlwaysScrollMap(api, helper.Reflection);
-        _ = new Calendar(api);
-        _ = new CjbCheatsMenu(api, helper.Reflection);
-        _ = new CjbItemSpawner(api, helper.Reflection);
-        _ = new ContentPatcher(helper, api);
-        _ = new DailyQuests(api);
-        _ = new GenericModConfigMenu(api, this.gmcm, this.ModManifest, helper.Reflection);
-        _ = new SpecialOrders(api, helper);
-        _ = new StardewAquarium(api, helper.Reflection);
-        _ = new ToDew(api);
-        _ = new ToggleCollisions(api);
-
         // Events
         helper.Events.Content.AssetRequested += OnAssetRequested;
-        helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
         helper.Events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
         helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
+
+        var cp = new ContentPatcherIntegration(helper);
+        if (cp.IsLoaded)
+        {
+            ModEvents.Subscribe<ConditionsApiReadyEventArgs>(_ => this.Initialize());
+            return;
+        }
+
+        helper.Events.GameLoop.GameLaunched += (_, _) => this.Initialize();
     }
 
     /// <inheritdoc />
@@ -87,8 +80,23 @@ internal sealed class ModEntry : Mod
         }
     }
 
-    private void OnGameLaunched(object? sender, GameLaunchedEventArgs e)
+    private void Initialize()
     {
+        var modInfo = this.Helper.ModRegistry.Get(this.ModManifest.UniqueID)!;
+        var api = new ModApi(modInfo, this.Helper, this.config, this.icons);
+        _ = new IntegrationHelper(this.Helper.ModRegistry, this.Helper.Reflection);
+        _ = new AlwaysScrollMap(api, this.Helper.Reflection);
+        _ = new Calendar(api);
+        _ = new CjbCheatsMenu(api, this.Helper.Reflection);
+        _ = new CjbItemSpawner(api, this.Helper.Reflection);
+        _ = new ContentPatcher(this.Helper, api);
+        _ = new DailyQuests(api);
+        _ = new GenericModConfigMenu(api, this.gmcm, this.ModManifest, this.Helper.Reflection);
+        _ = new SpecialOrders(api, this.Helper);
+        _ = new StardewAquarium(api, this.Helper.Reflection);
+        _ = new ToDew(api);
+        _ = new ToggleCollisions(api);
+
         var radialMenuIntegration = new RadialMenuIntegration(this.Helper.ModRegistry);
         if (radialMenuIntegration.IsLoaded)
         {

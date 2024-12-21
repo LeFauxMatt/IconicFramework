@@ -29,7 +29,7 @@ internal sealed class ContentPatcher
 
         helper.Events.Content.AssetsInvalidated += this.OnAssetsInvalidated;
         this.api.Subscribe(this.OnIconPressed);
-        ModEvents.Subscribe<ConditionsApiReadyEventArgs>(this.OnConditionsApiReady);
+        this.ReloadIcons();
     }
 
     private void OnAssetsInvalidated(object? sender, AssetsInvalidatedEventArgs e)
@@ -39,8 +39,6 @@ internal sealed class ContentPatcher
             this.ReloadIcons();
         }
     }
-
-    private void OnConditionsApiReady(ConditionsApiReadyEventArgs e) => this.ReloadIcons();
 
     private void OnIconPressed(IIconPressedEventArgs e)
     {
