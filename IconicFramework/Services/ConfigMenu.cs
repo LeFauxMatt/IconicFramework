@@ -1,15 +1,15 @@
-namespace LeFauxMods.IconicFramework.Services;
-
-using Common.Integrations.GenericModConfigMenu;
-using Common.Models;
-using Common.Services;
-using Common.Utilities;
+using LeFauxMods.Common.Integrations.GenericModConfigMenu;
+using LeFauxMods.Common.Models;
+using LeFauxMods.Common.Services;
+using LeFauxMods.Common.Utilities;
+using LeFauxMods.IconicFramework.Models;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Models;
 using StardewModdingAPI.Events;
 using StardewValley.BellsAndWhistles;
 using StardewValley.Menus;
+
+namespace LeFauxMods.IconicFramework.Services;
 
 /// <summary>Generic mod config menu integration.</summary>
 internal sealed class ConfigMenu
@@ -29,11 +29,12 @@ internal sealed class ConfigMenu
         IManifest manifest,
         ModConfig config,
         ConfigHelper<ModConfig> configHelper,
+        GenericModConfigMenuIntegration gmcm,
         Dictionary<string, IconComponent> icons)
     {
         this.helper = helper;
         this.manifest = manifest;
-        this.gmcm = new GenericModConfigMenuIntegration(manifest, helper.ModRegistry);
+        this.gmcm = gmcm;
         this.config = config;
         this.configHelper = configHelper;
         this.icons = icons;
@@ -82,7 +83,9 @@ internal sealed class ConfigMenu
 
     private void OnRenderedActiveMenu(object? sender, RenderedActiveMenuEventArgs e)
     {
-        if (!this.gmcm.IsLoaded || !this.gmcm.Api.TryGetCurrentMenu(out _, out _))
+        if (!this.gmcm.IsLoaded ||
+            !this.gmcm.Api.TryGetCurrentMenu(out var mod, out _) ||
+            !mod.UniqueID.Equals(Constants.ModId, StringComparison.OrdinalIgnoreCase))
         {
             return;
         }
@@ -92,11 +95,48 @@ internal sealed class ConfigMenu
         {
             IClickableMenu.drawToolTip(e.SpriteBatch, option.HoverText, null, null);
         }
+
+        option = this.options.FirstOrDefault(option => option.Held);
+        if (option is null || !this.icons.TryGetValue(option.Id, out var icon))
+        {
+            return;
+        }
+
+        var mouseLeft = this.helper.Input.GetState(SButton.MouseLeft);
+        option.Held = mouseLeft is SButtonState.Held or SButtonState.Pressed;
+
+        var (mouseX, mouseY) = Utility
+            .ModifyCoordinatesForUIScale(this.helper.Input.GetCursorPosition().GetScaledScreenPixels())
+            .ToPoint();
+
+        icon.draw(
+            e.SpriteBatch,
+            Color.White,
+            1f,
+            0,
+            mouseX - icon.bounds.X,
+            mouseY - icon.bounds.Y);
+
+        if (option.Held)
+        {
+            return;
+        }
+
+        // Release
+        var swap = this.options.FirstOrDefault(option =>
+            mouseY >= option.Position.Y && mouseY <= option.Position.Y + option.Height);
+
+        if (swap is not null && swap != option)
+        {
+            (option.Id, swap.Id) = (swap.Id, option.Id);
+        }
     }
 
     private void OnRenderingActiveMenu(object? sender, RenderingActiveMenuEventArgs e)
     {
-        if (!this.gmcm.IsLoaded || !this.gmcm.Api.TryGetCurrentMenu(out _, out _))
+        if (!this.gmcm.IsLoaded ||
+            !this.gmcm.Api.TryGetCurrentMenu(out var mod, out _) ||
+            !mod.UniqueID.Equals(Constants.ModId, StringComparison.OrdinalIgnoreCase))
         {
             return;
         }
@@ -155,6 +195,13 @@ internal sealed class ConfigMenu
             value => this.tempConfig.ToggleKey = value,
             I18n.Config_ToggleKey_Name,
             I18n.Config_ToggleKey_Tooltip);
+
+        api.AddBoolOption(
+            this.manifest,
+            () => this.tempConfig.EnableSecondary,
+            value => this.tempConfig.EnableSecondary = value,
+            I18n.Config_EnableSecondary_Name,
+            I18n.Config_EnableSecondary_Tooltip);
 
         api.AddBoolOption(
             this.manifest,
@@ -273,11 +320,15 @@ internal sealed class ConfigMenu
         /// <inheritdoc />
         public override string Tooltip => string.Empty;
 
+        public bool Held { get; set; }
+
         public string? HoverText { get; set; }
 
-        public string Id { get; private set; } = id;
+        public string Id { get; set; } = id;
 
         public ToolbarIconOption? Next { get; set; }
+
+        public Point Position { get; private set; }
 
         public ToolbarIconOption? Previous { get; set; }
 
@@ -295,31 +346,32 @@ internal sealed class ConfigMenu
                 return;
             }
 
+            this.Position = pos.ToPoint();
             var (mouseX, mouseY) = Utility
                 .ModifyCoordinatesForUIScale(helper.Input.GetCursorPosition().GetScaledScreenPixels())
                 .ToPoint();
 
-            var mouseLeft = helper.Input.GetState(SButton.MouseLeft) == SButtonState.Pressed;
-            var mouseRight = helper.Input.GetState(SButton.MouseRight) == SButtonState.Pressed;
-            var hoverY = mouseY >= pos.Y && mouseY < pos.Y + this.Height;
-            var clicked = (mouseLeft || mouseRight) && hoverY;
+            var mouseLeft = helper.Input.GetState(SButton.MouseLeft);
+            var mouseRight = helper.Input.GetState(SButton.MouseRight);
+            var hoverY = mouseY >= this.Position.Y && mouseY < this.Position.Y + this.Height;
+            var clicked = hoverY && (mouseLeft is SButtonState.Pressed || mouseRight is SButtonState.Pressed);
 
             // Down Arrow
             if (this.Next is not null)
             {
-                this.downArrow.tryHover(mouseX - (int)pos.X + 540, mouseY - (int)pos.Y + 4);
+                this.downArrow.tryHover(mouseX - this.Position.X + 540, mouseY - this.Position.Y + 4);
                 this.downArrow.draw(
                     spriteBatch,
                     Color.White,
                     1f,
                     0,
-                    (int)pos.X - 540,
-                    (int)pos.Y - 4);
+                    this.Position.X - 540,
+                    this.Position.Y - 4);
 
                 if ((this.downArrow.bounds with
                     {
-                        X = (int)pos.X - 540,
-                        Y = (int)pos.Y - 4
+                        X = this.Position.X - 540,
+                        Y = this.Position.Y - 4
                     }).Contains(mouseX, mouseY))
                 {
                     this.HoverText = this.downArrow.hoverText;
@@ -341,13 +393,13 @@ internal sealed class ConfigMenu
                 Color.White,
                 1f,
                 0,
-                (int)pos.X - 472,
-                (int)pos.Y);
+                this.Position.X - 472,
+                this.Position.Y);
 
             if ((this.showToolbar.bounds with
                 {
-                    X = (int)pos.X - 472,
-                    Y = (int)pos.Y
+                    X = this.Position.X - 472,
+                    Y = this.Position.Y
                 }).Contains(mouseX, mouseY))
             {
                 this.HoverText = this.showToolbar.hoverText;
@@ -368,13 +420,13 @@ internal sealed class ConfigMenu
                 Color.White,
                 1f,
                 0,
-                (int)pos.X - 412,
-                (int)pos.Y);
+                this.Position.X - 412,
+                this.Position.Y);
 
             if ((this.showRadial.bounds with
                 {
-                    X = (int)pos.X - 412,
-                    Y = (int)pos.Y
+                    X = this.Position.X - 412,
+                    Y = this.Position.Y
                 }).Contains(mouseX, mouseY))
             {
                 this.HoverText = this.showRadial.hoverText;
@@ -388,19 +440,19 @@ internal sealed class ConfigMenu
             // Up Arrow
             if (this.Previous is not null)
             {
-                this.upArrow.tryHover(mouseX - (int)pos.X + 356, mouseY - (int)pos.Y + 8);
+                this.upArrow.tryHover(mouseX - this.Position.X + 356, mouseY - this.Position.Y + 8);
                 this.upArrow.draw(
                     spriteBatch,
                     Color.White,
                     1f,
                     0,
-                    (int)pos.X - 356,
-                    (int)pos.Y - 8);
+                    this.Position.X - 356,
+                    this.Position.Y - 8);
 
                 if ((this.upArrow.bounds with
                     {
-                        X = (int)pos.X - 356,
-                        Y = (int)pos.Y - 8
+                        X = this.Position.X - 356,
+                        Y = this.Position.Y - 8
                     }).Contains(mouseX, mouseY))
                 {
                     this.HoverText = this.upArrow.hoverText;
@@ -413,9 +465,8 @@ internal sealed class ConfigMenu
             }
 
             // IconComponent
-            var x = (int)pos.X - 284;
-            var y = (int)pos.Y + 8;
-
+            var x = this.Position.X - 284;
+            var y = this.Position.Y + 8;
             if ((icon.bounds with
                 {
                     X = x,
@@ -426,6 +477,10 @@ internal sealed class ConfigMenu
             {
                 icon.scale = Math.Min(icon.scale + 0.04f, (icon.baseScale * 2) + 0.1f);
                 this.HoverText = icon.hoverText;
+                if (clicked)
+                {
+                    this.Held = true;
+                }
             }
             else
             {

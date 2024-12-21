@@ -1,5 +1,24 @@
 # Toolbar Icons Change Log
 
+## 3.0.1 (December 21, 2024)
+
+### Added
+
+* Added support for secondary actions on Right Click/Controller B.
+* Icons can now be reordered in the config menu by dragging them.
+
+### Changed
+
+* Only add special orders board icon if the board is unlocked.
+* The secondary action for special orders board launches the Qi quest board.
+* The secondary action for generic mod config menu opens Iconic Framework's config.
+
+### Fixed
+
+* Added back CJB Cheats Menu support.
+* Prevent drawing tooltips over cutscenes.
+* Fixed issue with textures being disposed on non-english languages.
+
 ## 3.0.0 (December 17, 2024)
 
 ### Added

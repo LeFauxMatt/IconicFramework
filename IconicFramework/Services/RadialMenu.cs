@@ -1,10 +1,10 @@
-namespace LeFauxMods.IconicFramework.Services;
-
-using Common.Integrations.RadialMenu;
-using Common.Models;
-using Common.Utilities;
-using Models;
+using LeFauxMods.Common.Integrations.RadialMenu;
+using LeFauxMods.Common.Models;
+using LeFauxMods.Common.Utilities;
+using LeFauxMods.IconicFramework.Models;
 using StardewModdingAPI.Utilities;
+
+namespace LeFauxMods.IconicFramework.Services;
 
 internal sealed class RadialMenu : IRadialMenuPageFactory
 {

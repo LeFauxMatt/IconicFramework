@@ -1,7 +1,7 @@
-namespace LeFauxMods.IconicFramework.Utilities;
-
 using System.Reflection;
 using StardewValley.Menus;
+
+namespace LeFauxMods.IconicFramework.Utilities;
 
 internal sealed class IntegrationHelper
 {

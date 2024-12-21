@@ -1,8 +1,8 @@
-namespace LeFauxMods.IconicFramework.Integrations;
-
-using Common.Integrations.IconicFramework;
+using LeFauxMods.Common.Integrations.IconicFramework;
+using LeFauxMods.IconicFramework.Utilities;
 using Microsoft.Xna.Framework;
-using Utilities;
+
+namespace LeFauxMods.IconicFramework.Integrations;
 
 /// <summary>Mod integration with CJB Cheats Menu.</summary>
 internal sealed class CjbCheatsMenu
@@ -38,7 +38,7 @@ internal sealed class CjbCheatsMenu
             {
                 if (e.Id == Id)
                 {
-                    method.Invoke(0, true);
+                    method.Invoke();
                 }
             });
     }

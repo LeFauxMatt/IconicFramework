@@ -1,44 +1,44 @@
+using LeFauxMods.Common.Integrations.ContentPatcher;
+using LeFauxMods.Common.Integrations.IconicFramework;
+using LeFauxMods.Common.Utilities;
+using LeFauxMods.IconicFramework.Models;
+using LeFauxMods.IconicFramework.Utilities;
+using StardewModdingAPI.Events;
+
 namespace LeFauxMods.IconicFramework.Integrations;
 
-using Common.Integrations.ContentPatcher;
-using Common.Integrations.IconicFramework;
-using Common.Utilities;
-using Models;
-using StardewModdingAPI.Events;
-using Utilities;
-
-internal sealed class ContentPack
+/// <summary>Mod integration for Content Patcher integration.</summary>
+internal sealed class ContentPatcher
 {
     private readonly Dictionary<string, Action> actions = new(StringComparer.OrdinalIgnoreCase);
     private readonly IIconicFrameworkApi api;
     private readonly IModHelper helper;
 
-    public ContentPack(IModHelper helper, IIconicFrameworkApi api)
+    public ContentPatcher(IModHelper helper, IIconicFrameworkApi api)
     {
         // Init
         this.api = api;
         this.helper = helper;
 
         // Events
+        var contentPatcher = new ContentPatcherIntegration(helper);
+        if (!contentPatcher.IsLoaded)
+        {
+            return;
+        }
+
         helper.Events.Content.AssetsInvalidated += this.OnAssetsInvalidated;
         this.api.Subscribe(this.OnIconPressed);
-
-        var contentPatcher = new ContentPatcherIntegration(helper);
-        if (contentPatcher.IsLoaded)
-        {
-            ModEvents.Subscribe<ConditionsApiReadyEventArgs>(this.OnConditionsApiReady);
-        }
+        this.ReloadIcons();
     }
 
     private void OnAssetsInvalidated(object? sender, AssetsInvalidatedEventArgs e)
     {
         if (e.NamesWithoutLocale.Any(assetName => assetName.IsEquivalentTo(Constants.DataPath)))
         {
-            this.helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
+            this.ReloadIcons();
         }
     }
-
-    private void OnConditionsApiReady(ConditionsApiReadyEventArgs e) => this.ReloadIcons();
 
     private void OnIconPressed(IIconPressedEventArgs e)
     {
@@ -48,15 +48,9 @@ internal sealed class ContentPack
         }
     }
 
-    private void OnUpdateTicked(object? sender, UpdateTickedEventArgs e)
-    {
-        this.helper.Events.GameLoop.UpdateTicked -= this.OnUpdateTicked;
-        this.ReloadIcons();
-    }
-
     private void ReloadIcons()
     {
-        var content = this.helper.GameContent.Load<Dictionary<string, ContentPackData>>(Constants.DataPath);
+        var content = this.helper.GameContent.Load<Dictionary<string, ContentData>>(Constants.DataPath);
         foreach (var (id, data) in content)
         {
             switch (data.Type)

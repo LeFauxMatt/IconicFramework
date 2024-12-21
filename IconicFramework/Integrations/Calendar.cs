@@ -1,8 +1,8 @@
-namespace LeFauxMods.IconicFramework.Integrations;
-
-using Common.Integrations.IconicFramework;
+using LeFauxMods.Common.Integrations.IconicFramework;
 using Microsoft.Xna.Framework;
 using StardewValley.Menus;
+
+namespace LeFauxMods.IconicFramework.Integrations;
 
 /// <summary>Vanilla integration with calendar.</summary>
 internal sealed class Calendar

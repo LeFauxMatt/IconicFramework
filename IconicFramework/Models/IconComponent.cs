@@ -1,11 +1,11 @@
-namespace LeFauxMods.IconicFramework.Models;
-
-using Common.Integrations.IconicFramework;
-using Common.Integrations.RadialMenu;
-using Common.Utilities;
+using LeFauxMods.Common.Integrations.IconicFramework;
+using LeFauxMods.Common.Integrations.RadialMenu;
+using LeFauxMods.Common.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley.Menus;
+
+namespace LeFauxMods.IconicFramework.Models;
 
 /// <summary>Creates a new instance of the <see cref="IconComponent" /> class.</summary>
 /// <param name="uniqueId">The icon's unique id.</param>
@@ -50,8 +50,14 @@ internal sealed class IconComponent(
             return MenuItemActivationResult.Delayed;
         }
 
+        var button = requestedAction switch
+        {
+            MenuItemAction.Select => SButton.ControllerA,
+            MenuItemAction.Use => SButton.ControllerB
+        };
+
         ModEvents.Publish<IIconPressedEventArgs, IconPressedEventArgs>(
-            new IconPressedEventArgs(this.name, SButton.MouseLeft));
+            new IconPressedEventArgs(this.name, button));
 
         return MenuItemActivationResult.Selected;
     }

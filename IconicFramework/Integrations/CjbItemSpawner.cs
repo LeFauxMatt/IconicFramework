@@ -1,9 +1,9 @@
-namespace LeFauxMods.IconicFramework.Integrations;
-
-using Common.Integrations.IconicFramework;
+using LeFauxMods.Common.Integrations.IconicFramework;
+using LeFauxMods.IconicFramework.Utilities;
 using Microsoft.Xna.Framework;
 using StardewValley.Menus;
-using Utilities;
+
+namespace LeFauxMods.IconicFramework.Integrations;
 
 /// <summary>Mod integration with CJB Item Spawner.</summary>
 internal sealed class CjbItemSpawner

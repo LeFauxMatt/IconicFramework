@@ -1,14 +1,14 @@
-namespace LeFauxMods.IconicFramework.Services;
-
-using Common.Integrations.IconicFramework;
-using Common.Models;
-using Common.Utilities;
+using LeFauxMods.Common.Integrations.IconicFramework;
+using LeFauxMods.Common.Models;
+using LeFauxMods.Common.Utilities;
+using LeFauxMods.IconicFramework.Models;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Models;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
 using StardewValley.Menus;
+
+namespace LeFauxMods.IconicFramework.Services;
 
 internal sealed class ToolbarMenu : IClickableMenu, IDisposable
 {
@@ -246,7 +246,7 @@ internal sealed class ToolbarMenu : IClickableMenu, IDisposable
 
     private void OnRenderedHud(object? sender, RenderedHudEventArgs e)
     {
-        if (!this.config.ShowTooltip || this.hoverIcon.Value is null)
+        if (!this.config.ShowTooltip || this.hoverIcon.Value is null || !Game1.IsHudDrawn)
         {
             return;
         }

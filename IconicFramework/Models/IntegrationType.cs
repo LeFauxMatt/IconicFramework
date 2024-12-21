@@ -1,7 +1,7 @@
-namespace LeFauxMods.IconicFramework.Models;
-
 using NetEscapades.EnumGenerators;
 using StardewValley.Menus;
+
+namespace LeFauxMods.IconicFramework.Models;
 
 /// <summary>The type of mod integration.</summary>
 [EnumExtensions]

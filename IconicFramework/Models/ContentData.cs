@@ -1,8 +1,9 @@
-namespace LeFauxMods.IconicFramework.Models;
-
 using Microsoft.Xna.Framework;
 
-internal sealed class ContentPackData
+namespace LeFauxMods.IconicFramework.Models;
+
+/// <summary>The data model for content pack integration.</summary>
+internal sealed class ContentData
 {
     /// <summary>Gets or sets additional data depending on the integration type.</summary>
     public string ExtraData { get; set; } = string.Empty;
