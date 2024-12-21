@@ -5,7 +5,6 @@ using LeFauxMods.Common.Utilities;
 using LeFauxMods.IconicFramework.Models;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using StardewModdingAPI.Events;
 using StardewValley.BellsAndWhistles;
 using StardewValley.Menus;
