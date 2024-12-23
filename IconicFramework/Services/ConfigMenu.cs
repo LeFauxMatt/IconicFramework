@@ -114,22 +114,22 @@ internal sealed class ConfigMenu
             Color.White,
             1f,
             0,
-            mouseX - icon.bounds.X,
-            mouseY - icon.bounds.Y);
+            mouseX - icon.bounds.X - 16,
+            mouseY - icon.bounds.Y - 16);
 
-        if (option.Held)
+        Game1.activeClickableMenu.drawMouse(e.SpriteBatch);
+
+        var swap = this.options.FirstOrDefault(
+            swap =>
+                mouseY >= swap.Position.Y && mouseY <= swap.Position.Y + swap.Height);
+
+        if (swap is null || swap.Id == option.Id)
         {
             return;
         }
 
-        // Release
-        var swap = this.options.FirstOrDefault(option =>
-            mouseY >= option.Position.Y && mouseY <= option.Position.Y + option.Height);
-
-        if (swap is not null && swap != option)
-        {
-            (option.Id, swap.Id) = (swap.Id, option.Id);
-        }
+        (option.Id, swap.Id) = (swap.Id, option.Id);
+        (option.Held, swap.Held) = (swap.Held, option.Held);
     }
 
     private void OnRenderingActiveMenu(object? sender, RenderingActiveMenuEventArgs e)

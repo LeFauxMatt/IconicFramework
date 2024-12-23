@@ -3,7 +3,7 @@
   "UniqueID": "furyx639.ToolbarIconsCP",
   "Name": "[CP] Toolbar Icons",
   "Author": "furyx639",
-  "Version": "3.0.0",
+  "Version": "3.0.2-beta.1",
   "Description": "Adds toolbar icons as shortcuts to other popular mods.",
   "ContentPackFor": {
     "UniqueID": "Pathoschild.ContentPatcher"

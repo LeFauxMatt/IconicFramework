@@ -34,29 +34,31 @@ internal sealed class SpecialOrders
                 switch (e.Button)
                 {
                     case SButton.MouseRight or SButton.ControllerB:
-                        Game1.player.team.qiChallengeBoardMutex.RequestLock(delegate
-                        {
-                            Game1.activeClickableMenu = new SpecialOrdersBoard("Qi")
+                        Game1.player.team.qiChallengeBoardMutex.RequestLock(
+                            delegate
                             {
-                                behaviorBeforeCleanup = delegate
+                                Game1.activeClickableMenu = new SpecialOrdersBoard("Qi")
                                 {
-                                    Game1.player.team.qiChallengeBoardMutex.ReleaseLock();
-                                }
-                            };
-                        });
+                                    behaviorBeforeCleanup = delegate
+                                    {
+                                        Game1.player.team.qiChallengeBoardMutex.ReleaseLock();
+                                    }
+                                };
+                            });
 
                         return;
                     default:
-                        Game1.player.team.ordersBoardMutex.RequestLock(delegate
-                        {
-                            Game1.activeClickableMenu = new SpecialOrdersBoard
+                        Game1.player.team.ordersBoardMutex.RequestLock(
+                            delegate
                             {
-                                behaviorBeforeCleanup = delegate
+                                Game1.activeClickableMenu = new SpecialOrdersBoard
                                 {
-                                    Game1.player.team.ordersBoardMutex.ReleaseLock();
-                                }
-                            };
-                        });
+                                    behaviorBeforeCleanup = delegate
+                                    {
+                                        Game1.player.team.ordersBoardMutex.ReleaseLock();
+                                    }
+                                };
+                            });
 
                         return;
                 }
