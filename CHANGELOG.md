@@ -5,6 +5,7 @@
 ### Changed
 
 * Slight tweaks to icon dragging in the config menu.
+* Added Radial Menu as an optional dependency.
 
 ### Fixed
 
