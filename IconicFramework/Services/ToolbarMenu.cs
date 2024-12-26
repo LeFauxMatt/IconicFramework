@@ -238,7 +238,7 @@ internal sealed class ToolbarMenu : IClickableMenu, IDisposable
         }
 
 
-        foreach (var component in this.allClickableComponents.OfType<ClickableTextureComponent>())
+        foreach (var component in this.allClickableComponents.OfType<IconComponent>())
         {
             component.scale = component.baseScale;
         }

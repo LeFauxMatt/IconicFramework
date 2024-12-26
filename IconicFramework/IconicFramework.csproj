@@ -6,7 +6,7 @@
 	<PropertyGroup>
 		<Name>Iconic Framework</Name>
 		<Description>Adds shortcut icons to vanilla and mod functions.</Description>
-		<Version>3.0.0</Version>
+		<Version>3.0.2</Version>
 		<RootNamespace>LeFauxMods.IconicFramework</RootNamespace>
 		<UniqueId>furyx639.ToolbarIcons</UniqueId>
 		<UpdateKeys>Nexus:11026, CurseForge:871834, ModDrop:1547451, GitHub:LeFauxMatt/IconicFramework</UpdateKeys>
@@ -20,6 +20,7 @@
 
 	<ItemGroup>
 		<SMAPIDependency Include="spacechase0.GenericModConfigMenu" Version="1.14.1" required="false" />
+		<SMAPIDependency Include="focustense.RadialMenu" Version="0.2.2" required="false" />
 	</ItemGroup>
 
 	<ItemGroup>

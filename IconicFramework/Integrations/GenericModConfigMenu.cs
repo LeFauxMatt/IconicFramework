@@ -20,7 +20,10 @@ internal sealed class GenericModConfigMenu
     /// <param name="gmcm">Dependency for integration with generic mod config menu.</param>
     /// <param name="manifest">Dependency for accessing mod manifest.</param>
     /// <param name="reflection">Dependency used for reflecting into non-public code.</param>
-    public GenericModConfigMenu(IIconicFrameworkApi api, GenericModConfigMenuIntegration gmcm, IManifest manifest,
+    public GenericModConfigMenu(
+        IIconicFrameworkApi api,
+        GenericModConfigMenuIntegration gmcm,
+        IManifest manifest,
         IReflectionHelper reflection)
     {
         this.gmcm = gmcm;
