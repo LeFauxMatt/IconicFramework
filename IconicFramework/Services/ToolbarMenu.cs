@@ -49,7 +49,7 @@ internal sealed class ToolbarMenu : IClickableMenu, IDisposable
     /// <inheritdoc />
     public override void draw(SpriteBatch b)
     {
-        if (Game1.activeClickableMenu is not null || !this.config.Visible || this.icons.Count == 0)
+        if (!Game1.IsHudDrawn || !this.config.Visible || this.icons.Count == 0)
         {
             return;
         }
@@ -193,7 +193,7 @@ internal sealed class ToolbarMenu : IClickableMenu, IDisposable
         this.allClickableComponents.Clear();
         foreach (var iconConfig in this.config.Icons)
         {
-            if (!this.icons.TryGetValue(iconConfig.Id, out var icon) || !iconConfig.ShowToolbar)
+            if (!this.icons.TryGetValue(iconConfig.Id, out _) || !iconConfig.ShowToolbar)
             {
                 continue;
             }
@@ -236,7 +236,6 @@ internal sealed class ToolbarMenu : IClickableMenu, IDisposable
         {
             return;
         }
-
 
         foreach (var component in this.allClickableComponents.OfType<IconComponent>())
         {

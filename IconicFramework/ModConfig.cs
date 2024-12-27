@@ -1,10 +1,12 @@
+using LeFauxMods.Common.Interface;
+using LeFauxMods.Common.Models;
 using LeFauxMods.IconicFramework.Models;
 using StardewModdingAPI.Utilities;
 
 namespace LeFauxMods.IconicFramework;
 
 /// <summary>Represents the mod's configuration.</summary>
-internal sealed class ModConfig
+internal sealed class ModConfig : IConfigWithLogAmount
 {
     /// <summary>Gets or sets a value indicating whether secondary actions are enabled.</summary>
     public bool EnableSecondary { get; set; } = true;
@@ -17,6 +19,9 @@ internal sealed class ModConfig
 
     /// <summary>Gets or sets the space between icons.</summary>
     public float IconSpacing { get; set; } = 4f;
+
+    /// <inheritdoc />
+    public LogAmount LogAmount { get; set; }
 
     /// <summary>Gets or sets a value indicating whether to play a sound when an icon is pressed.</summary>
     public bool PlaySound { get; set; } = true;

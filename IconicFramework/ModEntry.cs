@@ -19,18 +19,20 @@ internal sealed class ModEntry : Mod
     private ModConfig config = null!;
     private ConfigHelper<ModConfig> configHelper = null!;
 
+    private ToolbarMenu? toolbarMenu;
+
     /// <inheritdoc />
     public override void Entry(IModHelper helper)
     {
         // Init
         I18n.Init(helper.Translation);
-        Log.Init(this.Monitor);
         this.configHelper = new ConfigHelper<ModConfig>(this.Helper);
         this.config = this.configHelper.Load();
+        Log.Init(this.Monitor, this.config);
 
         // Events
         helper.Events.Content.AssetRequested += OnAssetRequested;
-        helper.Events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
+        helper.Events.GameLoop.ReturnedToTitle += this.OnReturnedToTitle;
         helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
 
         var cp = new ContentPatcherIntegration(helper);
@@ -53,14 +55,6 @@ internal sealed class ModEntry : Mod
             e.LoadFrom(
                 static () => new Dictionary<string, ContentData>(StringComparer.OrdinalIgnoreCase),
                 AssetLoadPriority.Exclusive);
-        }
-    }
-
-    private static void OnReturnedToTitle(object? sender, ReturnedToTitleEventArgs e)
-    {
-        foreach (var toolbarMenu in Game1.onScreenMenus.OfType<ToolbarMenu>())
-        {
-            toolbarMenu.Dispose();
         }
     }
 
@@ -104,12 +98,17 @@ internal sealed class ModEntry : Mod
         }
     }
 
+    private void OnReturnedToTitle(object? sender, ReturnedToTitleEventArgs e) => this.toolbarMenu?.Dispose();
+
     private void OnSaveLoaded(object? sender, SaveLoadedEventArgs e)
     {
         var index = Game1.onScreenMenus.IndexOf(Game1.onScreenMenus.FirstOrDefault(menu => menu is Toolbar));
-        if (index != -1)
+        if (index == -1)
         {
-            Game1.onScreenMenus.Insert(index, new ToolbarMenu(this.Helper, this.config, this.icons));
+            return;
         }
+
+        this.toolbarMenu = new ToolbarMenu(this.Helper, this.config, this.icons);
+        Game1.onScreenMenus.Insert(index, this.toolbarMenu);
     }
 }
