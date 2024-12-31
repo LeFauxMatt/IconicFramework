@@ -36,7 +36,7 @@ internal sealed class ConfigMenu
         this.config = config;
         this.configHelper = configHelper;
         this.icons = icons;
-        this.tempConfig = this.configHelper.Load();
+        this.tempConfig = configHelper.Load();
 
         helper.Events.Display.RenderedActiveMenu += this.OnRenderedActiveMenu;
         helper.Events.Display.RenderingActiveMenu += this.OnRenderingActiveMenu;

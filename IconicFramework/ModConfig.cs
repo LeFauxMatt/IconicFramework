@@ -56,6 +56,7 @@ internal sealed class ModConfig : IConfigWithLogAmount
         other.EnableSecondary = this.EnableSecondary;
         other.IconSize = this.IconSize;
         other.IconSpacing = this.IconSpacing;
+        other.LogAmount = this.LogAmount;
         other.PlaySound = this.PlaySound;
         other.ShowTooltip = this.ShowTooltip;
         other.ToggleKey = this.ToggleKey;
