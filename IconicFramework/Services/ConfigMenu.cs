@@ -9,52 +9,58 @@ using StardewValley.Menus;
 
 namespace LeFauxMods.IconicFramework.Services;
 
-/// <summary>Generic mod config menu integration.</summary>
+/// <summary>Responsible for handling the mod configuration menu.</summary>
 internal sealed class ConfigMenu
 {
-    private readonly ModConfig config;
-    private readonly ConfigHelper<ModConfig> configHelper;
+    private readonly IGenericModConfigMenuApi api = null!;
     private readonly GenericModConfigMenuIntegration gmcm;
-    private readonly IModHelper helper;
-    private readonly Dictionary<string, IconComponent> icons;
     private readonly IManifest manifest;
+    private readonly IModHelper helper;
     private readonly List<ToolbarIconOption> options = [];
-    private readonly ModConfig tempConfig;
     private bool reloadConfig;
 
-    public ConfigMenu(
-        IModHelper helper,
-        IManifest manifest,
-        ModConfig config,
-        ConfigHelper<ModConfig> configHelper,
-        GenericModConfigMenuIntegration gmcm,
-        Dictionary<string, IconComponent> icons)
+    public ConfigMenu(IModHelper helper, IManifest manifest, GenericModConfigMenuIntegration gmcm)
     {
         this.helper = helper;
         this.manifest = manifest;
         this.gmcm = gmcm;
-        this.config = config;
-        this.configHelper = configHelper;
-        this.icons = icons;
-        this.tempConfig = configHelper.Load();
+        if (!gmcm.IsLoaded)
+        {
+            return;
+        }
 
+        this.api = gmcm.Api;
         helper.Events.Display.RenderedActiveMenu += this.OnRenderedActiveMenu;
         helper.Events.Display.RenderingActiveMenu += this.OnRenderingActiveMenu;
         helper.Events.Input.ButtonsChanged += this.OnButtonsChanged;
         ModEvents.Subscribe<ConfigChangedEventArgs<ModConfig>>(this.OnConfigChanged);
         ModEvents.Subscribe<IconChangedEventArgs>(this.OnIconChanged);
+        this.SetupMenu();
+    }
+
+    private static ModConfig Config => ModState.ConfigHelper.Temp;
+
+    private static ConfigHelper<ModConfig> ConfigHelper => ModState.ConfigHelper;
+
+    private static void Reset()
+    {
+        ConfigHelper.Reset();
+        foreach (var icon in ModState.Config.Icons)
+        {
+            Config.Icons.Add(new IconConfig { Id = icon.Id });
+        }
     }
 
     private void OnButtonsChanged(object? sender, ButtonsChangedEventArgs e)
     {
-        if (!this.config.ToggleKey.JustPressed())
+        if (!ModState.Config.ToggleKey.JustPressed())
         {
             return;
         }
 
-        this.config.Visible = !this.config.Visible;
-        this.helper.Input.SuppressActiveKeybinds(this.config.ToggleKey);
-        this.configHelper.Save(this.config);
+        this.helper.Input.SuppressActiveKeybinds(ModState.Config.ToggleKey);
+        Config.Visible = !ModState.Config.Visible;
+        ConfigHelper.Save();
     }
 
     private void OnConfigChanged(ConfigChangedEventArgs<ModConfig> e)
@@ -66,6 +72,19 @@ internal sealed class ConfigMenu
 
         this.reloadConfig = true;
         this.helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
+    }
+
+    private void OnUpdateTicked(object? sender, UpdateTickedEventArgs e)
+    {
+        this.helper.Events.GameLoop.UpdateTicked -= this.OnUpdateTicked;
+        this.reloadConfig = false;
+
+        if (!this.gmcm.IsLoaded || ModState.Icons.Count == 0)
+        {
+            return;
+        }
+
+        this.SetupMenu();
     }
 
     private void OnIconChanged(IconChangedEventArgs e)
@@ -95,7 +114,7 @@ internal sealed class ConfigMenu
         }
 
         option = this.options.FirstOrDefault(option => option.Held);
-        if (option is null || !this.icons.TryGetValue(option.Id, out var icon))
+        if (option is null || !ModState.Icons.TryGetValue(option.Id, out var icon))
         {
             return;
         }
@@ -145,108 +164,89 @@ internal sealed class ConfigMenu
         }
     }
 
-    private void OnUpdateTicked(object? sender, UpdateTickedEventArgs e)
+    private void Save()
     {
-        this.helper.Events.GameLoop.UpdateTicked -= this.OnUpdateTicked;
-        this.reloadConfig = false;
+        Config.Icons =
+        [
+            ..this.options
+                .Join(
+                    Config.Icons,
+                    static option => option.Id,
+                    static icon => icon.Id,
+                    static (_, icon) => icon)
+                .Concat(
+                    Config.Icons.Where(icon => this.options.All(option => option.Id != icon.Id)))
+        ];
 
-        if (!Context.IsGameLaunched || !this.gmcm.IsLoaded || this.icons.Count == 0)
-        {
-            return;
-        }
+        Config.Visible = ModState.Config.Visible;
+        ConfigHelper.Save();
+    }
 
-        var api = this.gmcm.Api;
-        this.config.CopyTo(this.tempConfig);
+    private void SetupMenu()
+    {
+        this.gmcm.Register(Reset, this.Save);
 
-        this.gmcm.Register(
-            () =>
-            {
-                new ModConfig().CopyTo(this.tempConfig);
-                foreach (var iconConfig in this.config.Icons)
-                {
-                    this.tempConfig.Icons.Add(new IconConfig { Id = iconConfig.Id });
-                }
-            },
-            () =>
-            {
-                this.tempConfig.Icons =
-                [
-                    ..this.options
-                        .Join(
-                            this.tempConfig.Icons,
-                            option => option.Id,
-                            iconConfig => iconConfig.Id,
-                            (_, iconConfig) => iconConfig)
-                        .Concat(
-                            this.tempConfig.Icons.Where(
-                                iconConfig => this.options.All(option => option.Id != iconConfig.Id)))
-                ];
-
-                this.tempConfig.Visible = this.config.Visible;
-                this.tempConfig.CopyTo(this.config);
-                this.configHelper.Save(this.tempConfig);
-            });
-
-        api.AddKeybindList(
+        this.api.AddKeybindList(
             this.manifest,
-            () => this.tempConfig.ToggleKey,
-            value => this.tempConfig.ToggleKey = value,
+            static () => Config.ToggleKey,
+            static value => Config.ToggleKey = value,
             I18n.Config_ToggleKey_Name,
             I18n.Config_ToggleKey_Tooltip);
 
-        api.AddBoolOption(
+        this.api.AddBoolOption(
             this.manifest,
-            () => this.tempConfig.EnableSecondary,
-            value => this.tempConfig.EnableSecondary = value,
+            static () => Config.EnableSecondary,
+            static value => Config.EnableSecondary = value,
             I18n.Config_EnableSecondary_Name,
             I18n.Config_EnableSecondary_Tooltip);
 
-        api.AddBoolOption(
+        this.api.AddBoolOption(
             this.manifest,
-            () => this.tempConfig.PlaySound,
-            value => this.tempConfig.PlaySound = value,
+            static () => Config.PlaySound,
+            static value => Config.PlaySound = value,
             I18n.Config_PlaySound_Name,
             I18n.Config_PlaySound_Tooltip);
 
-        api.AddBoolOption(
+        this.api.AddBoolOption(
             this.manifest,
-            () => this.tempConfig.ShowTooltip,
-            value => this.tempConfig.ShowTooltip = value,
+            static () => Config.ShowTooltip,
+            static value => Config.ShowTooltip = value,
             I18n.Config_ShowTooltip_Name,
             I18n.Config_ShowTooltip_Tooltip);
 
-        api.AddNumberOption(
+        this.api.AddNumberOption(
             this.manifest,
-            () => this.tempConfig.IconSize,
-            value => this.tempConfig.IconSize = value,
-            () => "Size",
-            () => "Size",
+            static () => Config.IconSize,
+            static value => Config.IconSize = value,
+            I18n.Config_IconSize_Name,
+            I18n.Config_IconSize_Tooltip,
             16f,
             64f,
             8f);
 
-        api.AddNumberOption(
+        this.api.AddNumberOption(
             this.manifest,
-            () => this.tempConfig.IconSpacing,
-            value => this.tempConfig.IconSpacing = value,
-            () => "Spacing",
-            () => "Spacing",
+            static () => Config.IconSpacing,
+            static value => Config.IconSpacing = value,
+            I18n.Config_IconSpacing_Name,
+            I18n.Config_IconSpacing_Tooltip,
             1f,
             8f,
             1f);
 
-        api.AddSectionTitle(this.manifest, I18n.Config_CustomizeToolbar_Name, I18n.Config_CustomizeToolbar_Tooltip);
+        this.api.AddSectionTitle(this.manifest, I18n.Config_CustomizeToolbar_Name,
+            I18n.Config_CustomizeToolbar_Tooltip);
 
         this.options.Clear();
         ToolbarIconOption? previousOption = null;
-        foreach (var iconConfig in this.tempConfig.Icons)
+        foreach (var iconConfig in Config.Icons)
         {
-            if (!this.icons.TryGetValue(iconConfig.Id, out _))
+            if (!ModState.Icons.TryGetValue(iconConfig.Id, out _))
             {
                 continue;
             }
 
-            var option = new ToolbarIconOption(iconConfig.Id, this.helper, this.tempConfig, this.icons);
+            var option = new ToolbarIconOption(iconConfig.Id, this.helper);
             if (previousOption is not null)
             {
                 previousOption.Next = option;

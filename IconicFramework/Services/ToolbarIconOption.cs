@@ -1,5 +1,4 @@
 using LeFauxMods.Common.Integrations.GenericModConfigMenu;
-using LeFauxMods.IconicFramework.Models;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley.BellsAndWhistles;
@@ -7,11 +6,7 @@ using StardewValley.Menus;
 
 namespace LeFauxMods.IconicFramework.Services;
 
-internal sealed class ToolbarIconOption(
-    string id,
-    IModHelper helper,
-    ModConfig config,
-    Dictionary<string, IconComponent> icons) : ComplexOption
+internal sealed class ToolbarIconOption(string id, IModHelper helper) : ComplexOption
 {
     private readonly ClickableTextureComponent downArrow = new(
         "down",
@@ -81,12 +76,12 @@ internal sealed class ToolbarIconOption(
     /// <inheritdoc />
     public override void Draw(SpriteBatch spriteBatch, Vector2 pos)
     {
-        if (!icons.TryGetValue(this.Id, out var icon))
+        if (!ModState.Icons.TryGetValue(this.Id, out var icon))
         {
             return;
         }
 
-        var iconConfig = config.Icons.FirstOrDefault(iconConfig => iconConfig.Id == this.Id);
+        var iconConfig = ModState.ConfigHelper.Temp.Icons.FirstOrDefault(iconConfig => iconConfig.Id == this.Id);
         if (iconConfig is null)
         {
             return;
@@ -114,11 +109,8 @@ internal sealed class ToolbarIconOption(
                 this.Position.X - 540,
                 this.Position.Y - 4);
 
-            if ((this.downArrow.bounds with
-                {
-                    X = this.Position.X - 540,
-                    Y = this.Position.Y - 4
-                }).Contains(mouseX, mouseY))
+            if ((this.downArrow.bounds with { X = this.Position.X - 540, Y = this.Position.Y - 4 }).Contains(mouseX,
+                    mouseY))
             {
                 this.HoverText = this.downArrow.hoverText;
 
@@ -142,11 +134,7 @@ internal sealed class ToolbarIconOption(
             this.Position.X - 472,
             this.Position.Y);
 
-        if ((this.showToolbar.bounds with
-            {
-                X = this.Position.X - 472,
-                Y = this.Position.Y
-            }).Contains(mouseX, mouseY))
+        if ((this.showToolbar.bounds with { X = this.Position.X - 472, Y = this.Position.Y }).Contains(mouseX, mouseY))
         {
             this.HoverText = this.showToolbar.hoverText;
 
@@ -169,11 +157,7 @@ internal sealed class ToolbarIconOption(
             this.Position.X - 412,
             this.Position.Y);
 
-        if ((this.showRadial.bounds with
-            {
-                X = this.Position.X - 412,
-                Y = this.Position.Y
-            }).Contains(mouseX, mouseY))
+        if ((this.showRadial.bounds with { X = this.Position.X - 412, Y = this.Position.Y }).Contains(mouseX, mouseY))
         {
             this.HoverText = this.showRadial.hoverText;
 
@@ -195,11 +179,8 @@ internal sealed class ToolbarIconOption(
                 this.Position.X - 356,
                 this.Position.Y - 8);
 
-            if ((this.upArrow.bounds with
-                {
-                    X = this.Position.X - 356,
-                    Y = this.Position.Y - 8
-                }).Contains(mouseX, mouseY))
+            if ((this.upArrow.bounds with { X = this.Position.X - 356, Y = this.Position.Y - 8 }).Contains(mouseX,
+                    mouseY))
             {
                 this.HoverText = this.upArrow.hoverText;
 

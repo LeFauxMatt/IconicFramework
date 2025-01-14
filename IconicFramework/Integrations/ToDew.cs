@@ -1,5 +1,6 @@
 using System.Reflection;
 using LeFauxMods.Common.Integrations.IconicFramework;
+using LeFauxMods.Common.Utilities;
 using LeFauxMods.IconicFramework.Utilities;
 using Microsoft.Xna.Framework;
 using StardewValley.Menus;
@@ -22,11 +23,24 @@ internal sealed class ToDew
             return;
         }
 
-        var modType = mod.GetType();
-        var perScreenList = modType.GetField("list", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(mod);
-        var toDoMenu = modType.Assembly.GetType("ToDew.ToDoMenu");
-        if (perScreenList is null || toDoMenu is null)
+        Type? modType = null;
+        object? perScreenList = null;
+        Type? toDoMenu = null;
+        try
         {
+            modType = mod.GetType();
+            perScreenList = modType.GetField("list", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(mod);
+            toDoMenu = modType.Assembly.GetType("ToDew.ToDoMenu");
+        }
+        catch
+        {
+            // ignored
+        }
+
+
+        if (modType is null || perScreenList is null || toDoMenu is null)
+        {
+            Log.WarnOnce("Integration with {0} failed to load method.", Id);
             return;
         }
 
@@ -35,27 +49,23 @@ internal sealed class ToDew
             Constants.IconPath,
             new Rectangle(48, 16, 16, 16),
             I18n.Button_ToDew_Title,
-            I18n.Button_ToDew_Description);
-        api.Subscribe(
-            e =>
+            I18n.Button_ToDew_Description,
+            () =>
             {
-                if (e.Id == Id)
+                var value = perScreenList.GetType().GetProperty("Value")?.GetValue(perScreenList);
+                if (value is null)
                 {
-                    var value = perScreenList.GetType().GetProperty("Value")?.GetValue(perScreenList);
-                    if (value is null)
-                    {
-                        return;
-                    }
-
-                    var action = toDoMenu.GetConstructor([modType, value.GetType()]);
-                    if (action is null)
-                    {
-                        return;
-                    }
-
-                    var menu = action.Invoke([mod, value]);
-                    Game1.activeClickableMenu = (IClickableMenu)menu;
+                    return;
                 }
+
+                var action = toDoMenu.GetConstructor([modType, value.GetType()]);
+                if (action is null)
+                {
+                    return;
+                }
+
+                var menu = action.Invoke([mod, value]);
+                Game1.activeClickableMenu = (IClickableMenu)menu;
             });
     }
 }

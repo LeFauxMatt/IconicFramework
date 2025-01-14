@@ -12,23 +12,15 @@ internal sealed class ToggleCollisions
     ///     Initializes a new instance of the <see cref="ToggleCollisions" /> class.
     /// </summary>
     /// <param name="api">The Iconic Framework API.</param>
-    public ToggleCollisions(IIconicFrameworkApi api)
-    {
+    public ToggleCollisions(IIconicFrameworkApi api) =>
         api.AddToolbarIcon(
             Id,
             Constants.IconPath,
             new Rectangle(16, 16, 16, 16),
             I18n.Button_NoClip_Title,
-            I18n.Button_NoClip_Disable);
-
-        api.Subscribe(
-            e =>
+            I18n.Button_NoClip_Disable,
+            () =>
             {
-                if (e.Id != Id)
-                {
-                    return;
-                }
-
                 Game1.player.ignoreCollisions = !Game1.player.ignoreCollisions;
                 if (Game1.player.ignoreCollisions)
                 {
@@ -49,5 +41,4 @@ internal sealed class ToggleCollisions
                     I18n.Button_NoClip_Title,
                     I18n.Button_NoClip_Disable);
             });
-    }
 }
