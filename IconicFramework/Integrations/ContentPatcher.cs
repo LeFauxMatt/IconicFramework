@@ -34,7 +34,7 @@ internal sealed class ContentPatcher
 
     private void OnAssetsInvalidated(object? sender, AssetsInvalidatedEventArgs e)
     {
-        if (e.NamesWithoutLocale.Any(assetName => assetName.IsEquivalentTo(Constants.DataPath)))
+        if (e.NamesWithoutLocale.Any(static assetName => assetName.IsEquivalentTo(Constants.DataPath)))
         {
             this.ReloadIcons();
         }

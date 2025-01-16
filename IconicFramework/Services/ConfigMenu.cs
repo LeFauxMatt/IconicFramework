@@ -16,7 +16,7 @@ internal sealed class ConfigMenu
     private readonly GenericModConfigMenuIntegration gmcm;
     private readonly IManifest manifest;
     private readonly IModHelper helper;
-    private readonly List<ToolbarIconOption> options = [];
+    private readonly List<IconConfigOption> options = [];
     private bool reloadConfig;
 
     public ConfigMenu(IModHelper helper, IManifest manifest, GenericModConfigMenuIntegration gmcm)
@@ -89,6 +89,11 @@ internal sealed class ConfigMenu
 
     private void OnIconChanged(IconChangedEventArgs e)
     {
+        if (Config.Icons.All(icon => icon.Id != e.Id))
+        {
+            Config.Icons.Add(new IconConfig { Id = e.Id });
+        }
+
         if (this.reloadConfig)
         {
             return;
@@ -238,7 +243,7 @@ internal sealed class ConfigMenu
             I18n.Config_CustomizeToolbar_Tooltip);
 
         this.options.Clear();
-        ToolbarIconOption? previousOption = null;
+        IconConfigOption? previousOption = null;
         foreach (var iconConfig in Config.Icons)
         {
             if (!ModState.Icons.TryGetValue(iconConfig.Id, out _))
@@ -246,7 +251,7 @@ internal sealed class ConfigMenu
                 continue;
             }
 
-            var option = new ToolbarIconOption(iconConfig.Id, this.helper);
+            var option = new IconConfigOption(iconConfig.Id, this.helper);
             if (previousOption is not null)
             {
                 previousOption.Next = option;

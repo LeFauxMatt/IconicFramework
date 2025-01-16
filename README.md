@@ -8,6 +8,8 @@ Framework for adding shortcut icons to vanilla and mod functions.
     - [Menu](#menu)
     - [Method](#method)
     - [Keybind](#keybind)
+  - [Texture Overrides](#texture-overrides)
+    - [Example](#example)
   - [Translations](#translations)
   - [Credits](#credits)
 
@@ -51,6 +53,37 @@ parameterless method.
 ### Keybind
 
 ExtraData requires the keybind.
+
+## Texture Overrides
+
+A content pack can provide custom texture for any icon. You need the icon's
+unique identifier which you can find in your config.json file.
+
+### Example
+
+```json
+{
+  "Format": "2.4.0",
+  "Changes": [
+    {
+      "LogName": "Edit the icon texture",
+      "Action": "EditData",
+      "Target": "furyx639.ToolbarIcons/TextureOverrides",
+      "Entries": {
+        "Pathoschild.HorseFluteAnywhere": {
+          "Texture": "{{InternalAssetKey: assets/HorseFluteIcon.png}}",
+          "SourceRect": {
+            "X": 0,
+            "Y": 0,
+            "Width": 16,
+            "Height": 16
+          }
+        }
+      }
+    }
+  ]
+}
+```
 
 ## Translations
 

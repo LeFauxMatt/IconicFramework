@@ -8,6 +8,7 @@ using LeFauxMods.IconicFramework.Models;
 using LeFauxMods.IconicFramework.Services;
 using LeFauxMods.IconicFramework.Utilities;
 using StardewModdingAPI.Events;
+using StardewValley.Extensions;
 using StardewValley.Menus;
 
 namespace LeFauxMods.IconicFramework;
@@ -60,6 +61,7 @@ internal sealed class ModEntry : Mod
         helper.Events.Content.AssetRequested += OnAssetRequested;
         helper.Events.GameLoop.ReturnedToTitle += this.OnReturnedToTitle;
         helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
+        helper.Events.GameLoop.DayEnding += this.OnDayEnding;
 
         var cp = new ContentPatcherIntegration(helper);
         if (cp.IsLoaded)
@@ -82,6 +84,18 @@ internal sealed class ModEntry : Mod
                 static () => new Dictionary<string, ContentData>(StringComparer.OrdinalIgnoreCase),
                 AssetLoadPriority.Exclusive);
         }
+        else if (e.NameWithoutLocale.IsEquivalentTo(Constants.TextureOverridesPath))
+        {
+            e.LoadFrom(
+                static () => new Dictionary<string, TextureOverride>(StringComparer.OrdinalIgnoreCase),
+                AssetLoadPriority.Exclusive);
+        }
+    }
+
+    private void OnDayEnding(object? sender, DayEndingEventArgs e)
+    {
+        this.Helper.Events.GameLoop.DayEnding -= this.OnDayEnding;
+        ModState.Config.Icons.RemoveWhere(static iconConfig => !ModState.Icons.ContainsKey(iconConfig.Id));
     }
 
     private void OnReturnedToTitle(object? sender, ReturnedToTitleEventArgs e) => this.toolbarMenu?.Dispose();

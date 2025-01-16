@@ -6,7 +6,7 @@ using StardewValley.Menus;
 
 namespace LeFauxMods.IconicFramework.Services;
 
-internal sealed class ToolbarIconOption(string id, IModHelper helper) : ComplexOption
+internal sealed class IconConfigOption(string id, IModHelper helper) : ComplexOption
 {
     private readonly ClickableTextureComponent downArrow = new(
         "down",
@@ -67,11 +67,11 @@ internal sealed class ToolbarIconOption(string id, IModHelper helper) : ComplexO
 
     public string Id { get; set; } = id;
 
-    public ToolbarIconOption? Next { get; set; }
+    public IconConfigOption? Next { get; set; }
 
     public Point Position { get; private set; }
 
-    public ToolbarIconOption? Previous { get; set; }
+    public IconConfigOption? Previous { get; set; }
 
     /// <inheritdoc />
     public override void Draw(SpriteBatch spriteBatch, Vector2 pos)
