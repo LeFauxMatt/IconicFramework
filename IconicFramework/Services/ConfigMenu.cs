@@ -3,9 +3,7 @@ using LeFauxMods.Common.Models;
 using LeFauxMods.Common.Services;
 using LeFauxMods.Common.Utilities;
 using LeFauxMods.IconicFramework.Models;
-using Microsoft.Xna.Framework;
 using StardewModdingAPI.Events;
-using StardewValley.Menus;
 
 namespace LeFauxMods.IconicFramework.Services;
 
@@ -16,7 +14,6 @@ internal sealed class ConfigMenu
     private readonly GenericModConfigMenuIntegration gmcm;
     private readonly IManifest manifest;
     private readonly IModHelper helper;
-    private readonly List<IconConfigOption> options = [];
     private bool reloadConfig;
 
     public ConfigMenu(IModHelper helper, IManifest manifest, GenericModConfigMenuIntegration gmcm)
@@ -30,8 +27,6 @@ internal sealed class ConfigMenu
         }
 
         this.api = gmcm.Api;
-        helper.Events.Display.RenderedActiveMenu += this.OnRenderedActiveMenu;
-        helper.Events.Display.RenderingActiveMenu += this.OnRenderingActiveMenu;
         helper.Events.Input.ButtonsChanged += this.OnButtonsChanged;
         ModEvents.Subscribe<ConfigChangedEventArgs<ModConfig>>(this.OnConfigChanged);
         ModEvents.Subscribe<IconChangedEventArgs>(this.OnIconChanged);
@@ -103,93 +98,9 @@ internal sealed class ConfigMenu
         this.helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
     }
 
-    private void OnRenderedActiveMenu(object? sender, RenderedActiveMenuEventArgs e)
-    {
-        if (!this.gmcm.IsLoaded ||
-            !this.gmcm.Api.TryGetCurrentMenu(out var mod, out _) ||
-            !mod.UniqueID.Equals(Constants.ModId, StringComparison.OrdinalIgnoreCase))
-        {
-            return;
-        }
-
-        var option = this.options.FirstOrDefault(option => !string.IsNullOrWhiteSpace(option.HoverText));
-        if (option is not null)
-        {
-            IClickableMenu.drawToolTip(e.SpriteBatch, option.HoverText, null, null);
-        }
-
-        option = this.options.FirstOrDefault(option => option.Held);
-        if (option is null || !ModState.Icons.TryGetValue(option.Id, out var icon))
-        {
-            return;
-        }
-
-        var mouseLeft = this.helper.Input.GetState(SButton.MouseLeft);
-        option.Held = mouseLeft is SButtonState.Held or SButtonState.Pressed;
-
-        var (mouseX, mouseY) = Utility
-            .ModifyCoordinatesForUIScale(this.helper.Input.GetCursorPosition().GetScaledScreenPixels())
-            .ToPoint();
-
-        icon.draw(
-            e.SpriteBatch,
-            Color.White,
-            1f,
-            0,
-            mouseX - icon.bounds.X - 16,
-            mouseY - icon.bounds.Y - 16);
-
-        Game1.activeClickableMenu.drawMouse(e.SpriteBatch);
-
-        var swap = this.options.FirstOrDefault(
-            swap =>
-                mouseY >= swap.Position.Y && mouseY <= swap.Position.Y + swap.Height);
-
-        if (swap is null || swap.Id == option.Id)
-        {
-            return;
-        }
-
-        (option.Id, swap.Id) = (swap.Id, option.Id);
-        (option.Held, swap.Held) = (swap.Held, option.Held);
-    }
-
-    private void OnRenderingActiveMenu(object? sender, RenderingActiveMenuEventArgs e)
-    {
-        if (!this.gmcm.IsLoaded ||
-            !this.gmcm.Api.TryGetCurrentMenu(out var mod, out _) ||
-            !mod.UniqueID.Equals(Constants.ModId, StringComparison.OrdinalIgnoreCase))
-        {
-            return;
-        }
-
-        foreach (var option in this.options)
-        {
-            option.HoverText = null;
-        }
-    }
-
-    private void Save()
-    {
-        Config.Icons =
-        [
-            ..this.options
-                .Join(
-                    Config.Icons,
-                    static option => option.Id,
-                    static icon => icon.Id,
-                    static (_, icon) => icon)
-                .Concat(
-                    Config.Icons.Where(icon => this.options.All(option => option.Id != icon.Id)))
-        ];
-
-        Config.Visible = ModState.Config.Visible;
-        ConfigHelper.Save();
-    }
-
     private void SetupMenu()
     {
-        this.gmcm.Register(Reset, this.Save);
+        this.gmcm.Register(Reset, ConfigHelper.Save);
 
         this.api.AddKeybindList(
             this.manifest,
@@ -242,25 +153,6 @@ internal sealed class ConfigMenu
         this.api.AddSectionTitle(this.manifest, I18n.Config_CustomizeToolbar_Name,
             I18n.Config_CustomizeToolbar_Tooltip);
 
-        this.options.Clear();
-        IconConfigOption? previousOption = null;
-        foreach (var iconConfig in Config.Icons)
-        {
-            if (!ModState.Icons.TryGetValue(iconConfig.Id, out _))
-            {
-                continue;
-            }
-
-            var option = new IconConfigOption(iconConfig.Id, this.helper);
-            if (previousOption is not null)
-            {
-                previousOption.Next = option;
-                option.Previous = previousOption;
-            }
-
-            this.options.Add(option);
-            this.gmcm.AddComplexOption(option);
-            previousOption = option;
-        }
+        this.gmcm.AddComplexOption(new IconConfigOption(this.helper, Config.Icons));
     }
 }

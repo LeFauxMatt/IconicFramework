@@ -1,4 +1,6 @@
+using System.Globalization;
 using LeFauxMods.Common.Integrations.GenericModConfigMenu;
+using LeFauxMods.IconicFramework.Models;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley.BellsAndWhistles;
@@ -6,54 +8,92 @@ using StardewValley.Menus;
 
 namespace LeFauxMods.IconicFramework.Services;
 
-internal sealed class IconConfigOption(string id, IModHelper helper) : ComplexOption
+internal sealed class IconConfigOption : ComplexOption
 {
-    private readonly ClickableTextureComponent downArrow = new(
-        "down",
-        new Rectangle(0, 0, 44, 48),
-        null,
-        I18n.Config_MoveDown_Tooltip(),
-        Game1.mouseCursors,
-        new Rectangle(421, 472, 11, 12),
-        Game1.pixelZoom);
+    private readonly List<ClickableTextureComponent> components = [];
+    private readonly IModHelper helper;
+    private readonly List<IconConfig> icons;
+    private ClickableTextureComponent? held;
+    private int heldIndex;
+    private int heldItem;
+    private Point offset;
 
-    private readonly ClickableTextureComponent showRadial = new(
-        "showRadial",
-        new Rectangle(
-            0,
-            0,
-            OptionsCheckbox.sourceRectChecked.Width * Game1.pixelZoom,
-            OptionsCheckbox.sourceRectChecked.Height * Game1.pixelZoom),
-        null,
-        I18n.Config_ShowRadial_Tooltip(),
-        Game1.mouseCursors,
-        OptionsCheckbox.sourceRectChecked,
-        Game1.pixelZoom);
+    public IconConfigOption(IModHelper helper, List<IconConfig> icons)
+    {
+        this.helper = helper;
+        this.icons = icons;
+        this.Height = Game1.tileSize * ModState.Icons.Count;
 
-    private readonly ClickableTextureComponent showToolbar = new(
-        "showToolbar",
-        new Rectangle(
-            0,
-            0,
-            OptionsCheckbox.sourceRectChecked.Width * Game1.pixelZoom,
-            OptionsCheckbox.sourceRectChecked.Height * Game1.pixelZoom),
-        null,
-        I18n.Config_ShowToolbar_Tooltip(),
-        Game1.mouseCursors,
-        OptionsCheckbox.sourceRectChecked,
-        Game1.pixelZoom);
+        var i = -1;
+        for (var j = 0; j < ModState.Icons.Count; j++)
+        {
+            IconComponent? iconComponent = null;
+            while (++i < icons.Count && !ModState.Icons.TryGetValue(icons[i].Id, out iconComponent))
+            {
+            }
 
-    private readonly ClickableTextureComponent upArrow = new(
-        "up",
-        new Rectangle(0, 0, 44, 48),
-        null,
-        I18n.Config_MoveUp_Tooltip(),
-        Game1.mouseCursors,
-        new Rectangle(421, 459, 11, 12),
-        Game1.pixelZoom);
+            if (iconComponent is null)
+            {
+                break;
+            }
+
+            this.components.Add(new ClickableTextureComponent(
+                "down",
+                new Rectangle(0, (Game1.tileSize * j) + 8, 44, 48),
+                null,
+                I18n.Config_MoveDown_Tooltip(),
+                Game1.mouseCursors,
+                new Rectangle(421, 472, 11, 12),
+                Game1.pixelZoom));
+
+            this.components.Add(new ClickableTextureComponent(
+                "showRadial",
+                new Rectangle(
+                    68,
+                    (Game1.tileSize * j) + 12,
+                    OptionsCheckbox.sourceRectChecked.Width * Game1.pixelZoom,
+                    OptionsCheckbox.sourceRectChecked.Height * Game1.pixelZoom),
+                null,
+                I18n.Config_ShowRadial_Tooltip(),
+                Game1.mouseCursors,
+                icons[i].ShowRadial ? OptionsCheckbox.sourceRectChecked : OptionsCheckbox.sourceRectUnchecked,
+                Game1.pixelZoom));
+
+            this.components.Add(new ClickableTextureComponent(
+                "showToolbar",
+                new Rectangle(
+                    128,
+                    (Game1.tileSize * j) + 12,
+                    OptionsCheckbox.sourceRectChecked.Width * Game1.pixelZoom,
+                    OptionsCheckbox.sourceRectChecked.Height * Game1.pixelZoom),
+                null,
+                I18n.Config_ShowToolbar_Tooltip(),
+                Game1.mouseCursors,
+                icons[i].ShowToolbar ? OptionsCheckbox.sourceRectChecked : OptionsCheckbox.sourceRectUnchecked,
+                Game1.pixelZoom));
+
+            this.components.Add(new ClickableTextureComponent(
+                "up",
+                new Rectangle(184, (Game1.tileSize * j) + 8, 44, 48),
+                null,
+                I18n.Config_MoveUp_Tooltip(),
+                Game1.mouseCursors,
+                new Rectangle(421, 459, 11, 12),
+                Game1.pixelZoom));
+
+            this.components.Add(new ClickableTextureComponent(
+                i.ToString(CultureInfo.InvariantCulture),
+                new Rectangle(256, Game1.tileSize * j, Game1.tileSize, Game1.tileSize),
+                iconComponent.label,
+                iconComponent.hoverText,
+                iconComponent.texture,
+                iconComponent.sourceRect,
+                Game1.pixelZoom) { drawLabel = false });
+        }
+    }
 
     /// <inheritdoc />
-    public override int Height => Game1.tileSize;
+    public override int Height { get; }
 
     /// <inheritdoc />
     public override string Name => string.Empty;
@@ -61,173 +101,167 @@ internal sealed class IconConfigOption(string id, IModHelper helper) : ComplexOp
     /// <inheritdoc />
     public override string Tooltip => string.Empty;
 
-    public bool Held { get; set; }
-
-    public string? HoverText { get; set; }
-
-    public string Id { get; set; } = id;
-
-    public IconConfigOption? Next { get; set; }
-
-    public Point Position { get; private set; }
-
-    public IconConfigOption? Previous { get; set; }
-
     /// <inheritdoc />
     public override void Draw(SpriteBatch spriteBatch, Vector2 pos)
     {
-        if (!ModState.Icons.TryGetValue(this.Id, out var icon))
+        pos.X -= Math.Min(1200, Game1.uiViewport.Width - 200) / 2f;
+        var (originX, originY) = pos.ToPoint();
+        var (mouseX, mouseY) = this.helper.Input.GetCursorPosition().GetScaledScreenPixels().ToPoint();
+
+        mouseX -= originX;
+        mouseY -= originY;
+        ClickableTextureComponent? hovered = null;
+        ClickableTextureComponent? icon = null;
+        var item = -1;
+        var index = -1;
+
+        for (var i = 0; i < this.components.Count; i++)
         {
-            return;
-        }
-
-        var iconConfig = ModState.ConfigHelper.Temp.Icons.FirstOrDefault(iconConfig => iconConfig.Id == this.Id);
-        if (iconConfig is null)
-        {
-            return;
-        }
-
-        this.Position = pos.ToPoint();
-        var (mouseX, mouseY) = Utility
-            .ModifyCoordinatesForUIScale(helper.Input.GetCursorPosition().GetScaledScreenPixels())
-            .ToPoint();
-
-        var mouseLeft = helper.Input.GetState(SButton.MouseLeft);
-        var mouseRight = helper.Input.GetState(SButton.MouseRight);
-        var hoverY = mouseY >= this.Position.Y && mouseY < this.Position.Y + this.Height;
-        var clicked = hoverY && (mouseLeft is SButtonState.Pressed || mouseRight is SButtonState.Pressed);
-
-        // Down Arrow
-        if (this.Next is not null)
-        {
-            this.downArrow.tryHover(mouseX - this.Position.X + 540, mouseY - this.Position.Y + 4);
-            this.downArrow.draw(
-                spriteBatch,
-                Color.White,
-                1f,
-                0,
-                this.Position.X - 540,
-                this.Position.Y - 4);
-
-            if ((this.downArrow.bounds with { X = this.Position.X - 540, Y = this.Position.Y - 4 }).Contains(mouseX,
-                    mouseY))
+            var component = this.components[i];
+            var draw = i != 3 && i != this.components.Count - 5 && component != this.held;
+            if (draw && component.bounds.Contains(mouseX, mouseY))
             {
-                this.HoverText = this.downArrow.hoverText;
+                hovered = component;
+                item = (5 * (i / 5)) + 4;
+                icon = this.components[item];
+                index = int.Parse(icon.name, CultureInfo.InvariantCulture);
 
-                if (clicked)
+                if (this.held is not null && i % 5 == 4)
                 {
-                    (this.Id, this.Next.Id) = (this.Next.Id, this.Id);
+                    draw = false;
+
+                    // Swap component
+                    (this.components[item], this.components[this.heldItem]) =
+                        (this.components[this.heldItem], this.components[item]);
+
+                    (this.components[item].name, this.components[this.heldItem].name) =
+                        (this.components[this.heldItem].name, this.components[item].name);
+
+                    (this.components[item].bounds, this.components[this.heldItem].bounds) =
+                        (this.components[this.heldItem].bounds, this.components[item].bounds);
+
+                    // Swap config
+                    (this.icons[index], this.icons[this.heldIndex]) = (this.icons[this.heldIndex], this.icons[index]);
+
+                    this.heldItem = item;
+                    this.heldIndex = index;
+
+                    component.draw(
+                        spriteBatch,
+                        Color.White,
+                        1f,
+                        0,
+                        originX,
+                        originY - component.bounds.Y + this.held.bounds.Y);
                 }
             }
-        }
 
-        // Show Toolbar
-        this.showToolbar.sourceRect = iconConfig.ShowToolbar
-            ? OptionsCheckbox.sourceRectChecked
-            : OptionsCheckbox.sourceRectUnchecked;
-
-        this.showToolbar.draw(
-            spriteBatch,
-            Color.White,
-            1f,
-            0,
-            this.Position.X - 472,
-            this.Position.Y);
-
-        if ((this.showToolbar.bounds with { X = this.Position.X - 472, Y = this.Position.Y }).Contains(mouseX, mouseY))
-        {
-            this.HoverText = this.showToolbar.hoverText;
-
-            if (clicked)
+            if (draw)
             {
-                iconConfig.ShowToolbar = !iconConfig.ShowToolbar;
+                component.tryHover(mouseX, mouseY);
+                component.draw(
+                    spriteBatch,
+                    Color.White,
+                    1f,
+                    0,
+                    originX,
+                    originY);
+            }
+
+            if (i % 5 == 4 && !string.IsNullOrWhiteSpace(component.label))
+            {
+                Utility.drawTextWithShadow(
+                    spriteBatch,
+                    component.label,
+                    Game1.dialogueFont,
+                    new Vector2(originX + component.bounds.Right + 16, originY + component.bounds.Y + 12),
+                    SpriteText.color_Gray);
             }
         }
 
-        // Show Radial Menu
-        this.showRadial.sourceRect = iconConfig.ShowRadial
-            ? OptionsCheckbox.sourceRectChecked
-            : OptionsCheckbox.sourceRectUnchecked;
-
-        this.showRadial.draw(
-            spriteBatch,
-            Color.White,
-            1f,
-            0,
-            this.Position.X - 412,
-            this.Position.Y);
-
-        if ((this.showRadial.bounds with { X = this.Position.X - 412, Y = this.Position.Y }).Contains(mouseX, mouseY))
+        switch (this.helper.Input.GetState(SButton.MouseLeft))
         {
-            this.HoverText = this.showRadial.hoverText;
-
-            if (clicked)
-            {
-                iconConfig.ShowRadial = !iconConfig.ShowRadial;
-            }
-        }
-
-        // Up Arrow
-        if (this.Previous is not null)
-        {
-            this.upArrow.tryHover(mouseX - this.Position.X + 356, mouseY - this.Position.Y + 8);
-            this.upArrow.draw(
-                spriteBatch,
-                Color.White,
-                1f,
-                0,
-                this.Position.X - 356,
-                this.Position.Y - 8);
-
-            if ((this.upArrow.bounds with { X = this.Position.X - 356, Y = this.Position.Y - 8 }).Contains(mouseX,
-                    mouseY))
-            {
-                this.HoverText = this.upArrow.hoverText;
-
-                if (clicked)
+            case SButtonState.Pressed when hovered is not null:
+                switch (hovered.name)
                 {
-                    (this.Id, this.Previous.Id) = (this.Previous.Id, this.Id);
+                    case "down" when int.TryParse(this.components[item + 5].name, out var otherIndex):
+                        Game1.playSound("shwip");
+
+                        // Swap component
+                        (this.components[item], this.components[item + 5]) =
+                            (this.components[item + 5], this.components[item]);
+
+                        (this.components[item].name, this.components[item + 5].name) =
+                            (this.components[item + 5].name, this.components[item].name);
+
+                        (this.components[item].bounds, this.components[item + 5].bounds) =
+                            (this.components[item + 5].bounds, this.components[item].bounds);
+
+                        // Swap config
+                        (this.icons[index], this.icons[otherIndex]) = (this.icons[otherIndex], this.icons[index]);
+
+                        break;
+                    case "showRadial":
+                        Game1.playSound("drumkit6");
+                        this.icons[index].ShowRadial = !this.icons[index].ShowRadial;
+                        hovered.sourceRect = this.icons[index].ShowRadial
+                            ? OptionsCheckbox.sourceRectChecked
+                            : OptionsCheckbox.sourceRectUnchecked;
+                        break;
+                    case "showToolbar":
+                        Game1.playSound("drumkit6");
+                        this.icons[index].ShowToolbar = !this.icons[index].ShowToolbar;
+                        hovered.sourceRect = this.icons[index].ShowToolbar
+                            ? OptionsCheckbox.sourceRectChecked
+                            : OptionsCheckbox.sourceRectUnchecked;
+                        break;
+                    case "up" when int.TryParse(this.components[item - 5].name, out var otherIndex):
+                        Game1.playSound("shwip");
+
+                        // Swap component
+                        (this.components[item], this.components[item - 5]) =
+                            (this.components[item - 5], this.components[item]);
+
+                        (this.components[item].name, this.components[item - 5].name) =
+                            (this.components[item - 5].name, this.components[item].name);
+
+                        (this.components[item].bounds, this.components[item - 5].bounds) =
+                            (this.components[item - 5].bounds, this.components[item].bounds);
+
+                        // Swap config
+                        (this.icons[index], this.icons[otherIndex]) = (this.icons[otherIndex], this.icons[index]);
+
+                        break;
+                    case not null when icon is not null:
+                        Game1.playSound("smallSelect");
+                        this.held = icon;
+                        this.heldIndex = int.Parse(icon.name, CultureInfo.InvariantCulture);
+                        this.heldItem = item;
+                        this.offset = new Point(icon.bounds.X - mouseX, icon.bounds.Y - mouseY);
+                        break;
                 }
-            }
+
+                break;
+
+            case SButtonState.Held when this.held is not null:
+                this.held.draw(
+                    spriteBatch,
+                    Color.White,
+                    1f,
+                    0,
+                    originX + mouseX - this.held.bounds.X + this.offset.X,
+                    originY + mouseY - this.held.bounds.Y + this.offset.Y);
+
+                return;
+
+            case SButtonState.Released:
+                this.held = null;
+                break;
         }
 
-        // IconComponent
-        var x = this.Position.X - 284;
-        var y = this.Position.Y + 8;
-        if ((icon.bounds with
-            {
-                X = x,
-                Y = y,
-                Width = (int)(icon.sourceRect.Width * icon.baseScale * 2),
-                Height = (int)(icon.sourceRect.Height * icon.baseScale * 2)
-            }).Contains(mouseX, mouseY))
+        if (!string.IsNullOrWhiteSpace(hovered?.hoverText))
         {
-            icon.scale = Math.Min(icon.scale + 0.04f, (icon.baseScale * 2) + 0.1f);
-            this.HoverText = icon.hoverText;
-            if (clicked)
-            {
-                this.Held = true;
-            }
+            IClickableMenu.drawHoverText(spriteBatch, hovered.hoverText, Game1.smallFont);
         }
-        else
-        {
-            icon.scale = Math.Max(icon.scale - 0.04f, icon.baseScale * 2);
-        }
-
-        icon.draw(
-            spriteBatch,
-            Color.White,
-            1f,
-            0,
-            x - icon.bounds.X,
-            y - icon.bounds.Y);
-
-        // Label
-        Utility.drawTextWithShadow(
-            spriteBatch,
-            icon.label,
-            Game1.dialogueFont,
-            new Vector2(pos.X - 220, pos.Y),
-            SpriteText.color_Gray);
     }
 }
