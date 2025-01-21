@@ -13,7 +13,7 @@ internal sealed class IconConfigOption : ComplexOption
     private readonly List<ClickableTextureComponent> components = [];
     private readonly IModHelper helper;
     private readonly List<IconConfig> icons;
-    private ClickableTextureComponent? held;
+    private ClickableTextureComponent? heldIcon;
     private int heldIndex;
     private int heldItem;
     private Point offset;
@@ -104,12 +104,19 @@ internal sealed class IconConfigOption : ComplexOption
     /// <inheritdoc />
     public override void Draw(SpriteBatch spriteBatch, Vector2 pos)
     {
-        pos.X -= Math.Min(1200, Game1.uiViewport.Width - 200) / 2f;
+        var availableWidth = Math.Min(1200, Game1.uiViewport.Width - 200);
+        pos.X -= availableWidth / 2f;
         var (originX, originY) = pos.ToPoint();
         var (mouseX, mouseY) = this.helper.Input.GetCursorPosition().GetScaledScreenPixels().ToPoint();
 
         mouseX -= originX;
         mouseY -= originY;
+
+        var mouseLeft = this.helper.Input.GetState(SButton.MouseLeft);
+        var controllerA = this.helper.Input.GetState(SButton.ControllerA);
+        var pressed = mouseLeft is SButtonState.Pressed || controllerA is SButtonState.Pressed;
+        var held = mouseLeft is SButtonState.Held || controllerA is SButtonState.Held;
+
         ClickableTextureComponent? hovered = null;
         ClickableTextureComponent? icon = null;
         var item = -1;
@@ -118,7 +125,7 @@ internal sealed class IconConfigOption : ComplexOption
         for (var i = 0; i < this.components.Count; i++)
         {
             var component = this.components[i];
-            var draw = i != 3 && i != this.components.Count - 5 && component != this.held;
+            var draw = i != 3 && i != this.components.Count - 5 && component != this.heldIcon;
             if (draw && component.bounds.Contains(mouseX, mouseY))
             {
                 hovered = component;
@@ -126,7 +133,7 @@ internal sealed class IconConfigOption : ComplexOption
                 icon = this.components[item];
                 index = int.Parse(icon.name, CultureInfo.InvariantCulture);
 
-                if (this.held is not null && i % 5 == 4)
+                if (this.heldIcon is not null && i % 5 == 4)
                 {
                     draw = false;
 
@@ -152,7 +159,7 @@ internal sealed class IconConfigOption : ComplexOption
                         1f,
                         0,
                         originX,
-                        originY - component.bounds.Y + this.held.bounds.Y);
+                        originY - component.bounds.Y + this.heldIcon.bounds.Y);
                 }
             }
 
@@ -179,84 +186,80 @@ internal sealed class IconConfigOption : ComplexOption
             }
         }
 
-        switch (this.helper.Input.GetState(SButton.MouseLeft))
+        if (pressed && hovered is not null)
         {
-            case SButtonState.Pressed when hovered is not null:
-                switch (hovered.name)
-                {
-                    case "down" when int.TryParse(this.components[item + 5].name, out var otherIndex):
-                        Game1.playSound("shwip");
+            switch (hovered.name)
+            {
+                case "down" when int.TryParse(this.components[item + 5].name, out var otherIndex):
+                    Game1.playSound("shwip");
 
-                        // Swap component
-                        (this.components[item], this.components[item + 5]) =
-                            (this.components[item + 5], this.components[item]);
+                    // Swap component
+                    (this.components[item], this.components[item + 5]) =
+                        (this.components[item + 5], this.components[item]);
 
-                        (this.components[item].name, this.components[item + 5].name) =
-                            (this.components[item + 5].name, this.components[item].name);
+                    (this.components[item].name, this.components[item + 5].name) =
+                        (this.components[item + 5].name, this.components[item].name);
 
-                        (this.components[item].bounds, this.components[item + 5].bounds) =
-                            (this.components[item + 5].bounds, this.components[item].bounds);
+                    (this.components[item].bounds, this.components[item + 5].bounds) =
+                        (this.components[item + 5].bounds, this.components[item].bounds);
 
-                        // Swap config
-                        (this.icons[index], this.icons[otherIndex]) = (this.icons[otherIndex], this.icons[index]);
+                    // Swap config
+                    (this.icons[index], this.icons[otherIndex]) = (this.icons[otherIndex], this.icons[index]);
 
-                        break;
-                    case "showRadial":
-                        Game1.playSound("drumkit6");
-                        this.icons[index].ShowRadial = !this.icons[index].ShowRadial;
-                        hovered.sourceRect = this.icons[index].ShowRadial
-                            ? OptionsCheckbox.sourceRectChecked
-                            : OptionsCheckbox.sourceRectUnchecked;
-                        break;
-                    case "showToolbar":
-                        Game1.playSound("drumkit6");
-                        this.icons[index].ShowToolbar = !this.icons[index].ShowToolbar;
-                        hovered.sourceRect = this.icons[index].ShowToolbar
-                            ? OptionsCheckbox.sourceRectChecked
-                            : OptionsCheckbox.sourceRectUnchecked;
-                        break;
-                    case "up" when int.TryParse(this.components[item - 5].name, out var otherIndex):
-                        Game1.playSound("shwip");
+                    break;
+                case "showRadial":
+                    Game1.playSound("drumkit6");
+                    this.icons[index].ShowRadial = !this.icons[index].ShowRadial;
+                    hovered.sourceRect = this.icons[index].ShowRadial
+                        ? OptionsCheckbox.sourceRectChecked
+                        : OptionsCheckbox.sourceRectUnchecked;
+                    break;
+                case "showToolbar":
+                    Game1.playSound("drumkit6");
+                    this.icons[index].ShowToolbar = !this.icons[index].ShowToolbar;
+                    hovered.sourceRect = this.icons[index].ShowToolbar
+                        ? OptionsCheckbox.sourceRectChecked
+                        : OptionsCheckbox.sourceRectUnchecked;
+                    break;
+                case "up" when int.TryParse(this.components[item - 5].name, out var otherIndex):
+                    Game1.playSound("shwip");
 
-                        // Swap component
-                        (this.components[item], this.components[item - 5]) =
-                            (this.components[item - 5], this.components[item]);
+                    // Swap component
+                    (this.components[item], this.components[item - 5]) =
+                        (this.components[item - 5], this.components[item]);
 
-                        (this.components[item].name, this.components[item - 5].name) =
-                            (this.components[item - 5].name, this.components[item].name);
+                    (this.components[item].name, this.components[item - 5].name) =
+                        (this.components[item - 5].name, this.components[item].name);
 
-                        (this.components[item].bounds, this.components[item - 5].bounds) =
-                            (this.components[item - 5].bounds, this.components[item].bounds);
+                    (this.components[item].bounds, this.components[item - 5].bounds) =
+                        (this.components[item - 5].bounds, this.components[item].bounds);
 
-                        // Swap config
-                        (this.icons[index], this.icons[otherIndex]) = (this.icons[otherIndex], this.icons[index]);
+                    // Swap config
+                    (this.icons[index], this.icons[otherIndex]) = (this.icons[otherIndex], this.icons[index]);
 
-                        break;
-                    case not null when icon is not null:
-                        Game1.playSound("smallSelect");
-                        this.held = icon;
-                        this.heldIndex = int.Parse(icon.name, CultureInfo.InvariantCulture);
-                        this.heldItem = item;
-                        this.offset = new Point(icon.bounds.X - mouseX, icon.bounds.Y - mouseY);
-                        break;
-                }
-
-                break;
-
-            case SButtonState.Held when this.held is not null:
-                this.held.draw(
-                    spriteBatch,
-                    Color.White,
-                    1f,
-                    0,
-                    originX + mouseX - this.held.bounds.X + this.offset.X,
-                    originY + mouseY - this.held.bounds.Y + this.offset.Y);
-
-                return;
-
-            case SButtonState.Released:
-                this.held = null;
-                break;
+                    break;
+                case not null when icon is not null:
+                    Game1.playSound("smallSelect");
+                    this.heldIcon = icon;
+                    this.heldIndex = int.Parse(icon.name, CultureInfo.InvariantCulture);
+                    this.heldItem = item;
+                    this.offset = new Point(icon.bounds.X - mouseX, icon.bounds.Y - mouseY);
+                    break;
+            }
+        }
+        else if (held && this.heldIcon is not null)
+        {
+            this.heldIcon.draw(
+                spriteBatch,
+                Color.White,
+                1f,
+                0,
+                originX + mouseX - this.heldIcon.bounds.X + this.offset.X,
+                originY + mouseY - this.heldIcon.bounds.Y + this.offset.Y);
+        }
+        else if (this.heldIcon is not null && !pressed && !held)
+        {
+            this.heldIcon = null;
         }
 
         if (!string.IsNullOrWhiteSpace(hovered?.hoverText))

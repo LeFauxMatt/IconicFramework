@@ -57,17 +57,17 @@ internal sealed class ContentPatcher
             {
                 case IntegrationType.Menu
                     when IntegrationHelper.TryGetMenuAction(data.ModId, data.ExtraData, out var action) &&
-                         this.actions.TryAdd(id, action):
+                    this.actions.TryAdd(id, action):
                     break;
 
                 case IntegrationType.Method
                     when IntegrationHelper.TryGetMethod(data.ModId, data.ExtraData, out var action) &&
-                         this.actions.TryAdd(id, action):
+                    this.actions.TryAdd(id, action):
                     break;
 
                 case IntegrationType.Keybind
                     when IntegrationHelper.TryGetKeybindAction(data.ModId, data.ExtraData, out var action) &&
-                         this.actions.TryAdd(id, action):
+                    this.actions.TryAdd(id, action):
                     break;
                 case IntegrationType.Menu:
                 case IntegrationType.Method:
