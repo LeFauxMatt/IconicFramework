@@ -1,5 +1,6 @@
 using LeFauxMods.Common.Integrations.GenericModConfigMenu;
 using LeFauxMods.Common.Integrations.IconicFramework;
+using LeFauxMods.Common.Utilities;
 using LeFauxMods.IconicFramework.Utilities;
 using Microsoft.Xna.Framework;
 
@@ -38,9 +39,18 @@ internal sealed class GenericModConfigMenu
             return;
         }
 
-        this.method = reflection.GetMethod(mod, "OpenListMenu", false);
+        try
+        {
+            this.method = reflection.GetMethod(mod, "OpenListMenu", false);
+        }
+        catch
+        {
+            // ignored
+        }
+
         if (this.method is null)
         {
+            Log.WarnOnce("Integration with {0} failed to load method.", Id);
             return;
         }
 

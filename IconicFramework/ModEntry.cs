@@ -8,6 +8,7 @@ using LeFauxMods.IconicFramework.Models;
 using LeFauxMods.IconicFramework.Services;
 using LeFauxMods.IconicFramework.Utilities;
 using StardewModdingAPI.Events;
+using StardewValley.Extensions;
 using StardewValley.Menus;
 
 namespace LeFauxMods.IconicFramework;
@@ -15,54 +16,7 @@ namespace LeFauxMods.IconicFramework;
 /// <inheritdoc />
 internal sealed class ModEntry : Mod
 {
-    private readonly Dictionary<string, IconComponent> icons = [];
-    private ModConfig config = null!;
-    private ConfigHelper<ModConfig> configHelper = null!;
-
-    /// <inheritdoc />
-    public override void Entry(IModHelper helper)
-    {
-        // Init
-        I18n.Init(helper.Translation);
-        Log.Init(this.Monitor);
-        this.configHelper = new ConfigHelper<ModConfig>(this.Helper);
-        this.config = this.configHelper.Load();
-
-        // Events
-        helper.Events.Content.AssetRequested += OnAssetRequested;
-        helper.Events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
-        helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
-
-        var cp = new ContentPatcherIntegration(helper);
-        if (cp.IsLoaded)
-        {
-            ModEvents.Subscribe<ConditionsApiReadyEventArgs>(_ => this.Initialize());
-            return;
-        }
-
-        helper.Events.GameLoop.GameLaunched += (_, _) => this.Initialize();
-    }
-
-    /// <inheritdoc />
-    public override object GetApi(IModInfo mod) => new ModApi(mod, this.Helper, this.config, this.icons);
-
-    private static void OnAssetRequested(object? sender, AssetRequestedEventArgs e)
-    {
-        if (e.NameWithoutLocale.IsEquivalentTo(Constants.DataPath))
-        {
-            e.LoadFrom(
-                static () => new Dictionary<string, ContentData>(StringComparer.OrdinalIgnoreCase),
-                AssetLoadPriority.Exclusive);
-        }
-    }
-
-    private static void OnReturnedToTitle(object? sender, ReturnedToTitleEventArgs e)
-    {
-        foreach (var toolbarMenu in Game1.onScreenMenus.OfType<ToolbarMenu>())
-        {
-            toolbarMenu.Dispose();
-        }
-    }
+    private ToolbarMenu? toolbarMenu;
 
     private void Initialize()
     {
@@ -71,23 +25,14 @@ internal sealed class ModEntry : Mod
         themeHelper.AddAsset(Constants.UiPath, this.Helper.ModContent.Load<IRawTextureData>("assets/ui.png"));
 
         var gmcm = new GenericModConfigMenuIntegration(this.ModManifest, this.Helper.ModRegistry);
-        if (gmcm.IsLoaded)
-        {
-            _ = new ConfigMenu(
-                this.Helper,
-                this.ModManifest,
-                this.config,
-                this.configHelper,
-                gmcm,
-                this.icons);
-        }
+        _ = new ConfigMenu(this.Helper, this.ModManifest, gmcm);
 
         var modInfo = this.Helper.ModRegistry.Get(this.ModManifest.UniqueID)!;
-        var api = new ModApi(modInfo, this.Helper, this.config, this.icons);
+        var api = new ModApi(modInfo, this.Helper);
         _ = new IntegrationHelper(this.Helper.ModRegistry, this.Helper.Reflection);
         _ = new AlwaysScrollMap(api, this.Helper.Reflection);
         _ = new Calendar(api);
-        _ = new CjbCheatsMenu(api, this.Helper.Reflection);
+        _ = new CjbCheatsMenu(api);
         _ = new CjbItemSpawner(api, this.Helper.Reflection);
         _ = new ContentPatcher(this.Helper, api);
         _ = new DailyQuests(api);
@@ -100,16 +45,70 @@ internal sealed class ModEntry : Mod
         var radialMenuIntegration = new RadialMenuIntegration(this.Helper.ModRegistry);
         if (radialMenuIntegration.IsLoaded)
         {
-            _ = new RadialMenu(radialMenuIntegration.Api, this.ModManifest, this.config, this.icons);
+            _ = new RadialMenu(radialMenuIntegration.Api, this.ModManifest);
         }
     }
 
+    /// <inheritdoc />
+    public override void Entry(IModHelper helper)
+    {
+        // Init
+        I18n.Init(helper.Translation);
+        ModState.Init(helper);
+        Log.Init(this.Monitor, ModState.Config);
+
+        // Events
+        helper.Events.Content.AssetRequested += OnAssetRequested;
+        helper.Events.GameLoop.ReturnedToTitle += this.OnReturnedToTitle;
+        helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
+        helper.Events.GameLoop.DayEnding += this.OnDayEnding;
+
+        var cp = new ContentPatcherIntegration(helper);
+        if (cp.IsLoaded)
+        {
+            ModEvents.Subscribe<ConditionsApiReadyEventArgs>(_ => this.Initialize());
+            return;
+        }
+
+        helper.Events.GameLoop.GameLaunched += (_, _) => this.Initialize();
+    }
+
+    /// <inheritdoc />
+    public override object GetApi(IModInfo mod) => new ModApi(mod, this.Helper);
+
+    private static void OnAssetRequested(object? sender, AssetRequestedEventArgs e)
+    {
+        if (e.NameWithoutLocale.IsEquivalentTo(Constants.DataPath))
+        {
+            e.LoadFrom(
+                static () => new Dictionary<string, ContentData>(StringComparer.OrdinalIgnoreCase),
+                AssetLoadPriority.Exclusive);
+        }
+        else if (e.NameWithoutLocale.IsEquivalentTo(Constants.TextureOverridesPath))
+        {
+            e.LoadFrom(
+                static () => new Dictionary<string, TextureOverride>(StringComparer.OrdinalIgnoreCase),
+                AssetLoadPriority.Exclusive);
+        }
+    }
+
+    private void OnDayEnding(object? sender, DayEndingEventArgs e)
+    {
+        this.Helper.Events.GameLoop.DayEnding -= this.OnDayEnding;
+        ModState.Config.Icons.RemoveWhere(static iconConfig => !ModState.Icons.ContainsKey(iconConfig.Id));
+    }
+
+    private void OnReturnedToTitle(object? sender, ReturnedToTitleEventArgs e) => this.toolbarMenu?.Dispose();
+
     private void OnSaveLoaded(object? sender, SaveLoadedEventArgs e)
     {
-        var index = Game1.onScreenMenus.IndexOf(Game1.onScreenMenus.FirstOrDefault(menu => menu is Toolbar));
-        if (index != -1)
+        var index = Game1.onScreenMenus.IndexOf(Game1.onScreenMenus.FirstOrDefault(static menu => menu is Toolbar));
+        if (index == -1)
         {
-            Game1.onScreenMenus.Insert(index, new ToolbarMenu(this.Helper, this.config, this.icons));
+            return;
         }
+
+        this.toolbarMenu = new ToolbarMenu(this.Helper);
+        Game1.onScreenMenus.Insert(index, this.toolbarMenu);
     }
 }

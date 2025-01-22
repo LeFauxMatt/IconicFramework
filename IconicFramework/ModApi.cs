@@ -3,6 +3,7 @@ using LeFauxMods.Common.Models;
 using LeFauxMods.Common.Services;
 using LeFauxMods.Common.Utilities;
 using LeFauxMods.IconicFramework.Models;
+using LeFauxMods.IconicFramework.Services;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -11,10 +12,8 @@ namespace LeFauxMods.IconicFramework;
 /// <inheritdoc />
 public sealed class ModApi : IIconicFrameworkApi
 {
-    private readonly ModConfig config;
     private readonly EventManager eventManager = new();
     private readonly IModHelper helper;
-    private readonly Dictionary<string, IconComponent> icons;
     private readonly Dictionary<string, string> ids = [];
     private readonly IModInfo mod;
     private EventHandler<string>? toolbarIconPressed;
@@ -22,14 +21,10 @@ public sealed class ModApi : IIconicFrameworkApi
     /// <summary>Creates a new instance of the <see cref="ModApi" /> class.</summary>
     /// <param name="mod">The mod information.</param>
     /// <param name="helper">Dependency for events, input, and content.</param>
-    /// <param name="config">The mod's configuration.</param>
-    /// <param name="icons">The icons.</param>
-    internal ModApi(IModInfo mod, IModHelper helper, ModConfig config, Dictionary<string, IconComponent> icons)
+    internal ModApi(IModInfo mod, IModHelper helper)
     {
         this.helper = helper;
         this.mod = mod;
-        this.config = config;
-        this.icons = icons;
 
         // Events
         ModEvents.Subscribe<IIconPressedEventArgs>(this.OnIconPressed);
@@ -59,22 +54,31 @@ public sealed class ModApi : IIconicFrameworkApi
         Func<string>? getTitle,
         Func<string>? getDescription)
     {
-        var uniqueId = $"{this.mod.Manifest.UniqueID}-{id}";
+        var uniqueId = string.IsNullOrWhiteSpace(id)
+            ? this.mod.Manifest.UniqueID
+            : $"{this.mod.Manifest.UniqueID}-{id}";
+
         IconComponent? icon;
+
+        if (ModState.TextureOverrides.TryGetValue(uniqueId, out var textureOverride))
+        {
+            texturePath = textureOverride.Texture;
+            sourceRect = textureOverride.SourceRect;
+        }
 
         var texture = this.helper.GameContent.Load<Texture2D>(texturePath);
         var sourceRectangle = sourceRect ?? new Rectangle(0, 0, texture.Width, texture.Height);
-        var scale = this.config.IconSize * 0.75f / Math.Max(sourceRectangle.Width, sourceRectangle.Height);
+        var scale = ModState.Config.IconSize * 0.75f / Math.Max(sourceRectangle.Width, sourceRectangle.Height);
 
         // Update previously registered icon
         if (!this.ids.TryAdd(uniqueId, id))
         {
-            if (!this.icons.TryGetValue(uniqueId, out icon))
+            if (!ModState.Icons.TryGetValue(uniqueId, out icon))
             {
                 return;
             }
 
-            icon.texture = this.helper.GameContent.Load<Texture2D>(texturePath);
+            icon.texture = texture;
             icon.sourceRect = sourceRectangle;
             icon.label = getTitle?.Invoke() ?? icon.label;
             icon.hoverText = getDescription?.Invoke() ?? icon.hoverText;
@@ -90,19 +94,57 @@ public sealed class ModApi : IIconicFrameworkApi
             getDescription,
             scale) { drawLabel = false };
 
-        if (!this.icons.TryAdd(uniqueId, icon))
+        if (!ModState.Icons.TryAdd(uniqueId, icon))
         {
             return;
         }
 
-        if (!this.config.Icons.Any(iconConfig => iconConfig.Id.Equals(uniqueId, StringComparison.OrdinalIgnoreCase)))
+        if (ModState.Config.Icons.All(iconConfig => iconConfig.Id != uniqueId))
         {
-            this.config.Icons.Add(new IconConfig { Id = uniqueId });
-            ModEvents.Publish(new ConfigChangedEventArgs<ModConfig>(this.config));
+            ModState.Config.Icons.Add(new IconConfig { Id = uniqueId });
+            ModEvents.Publish(new ConfigChangedEventArgs<ModConfig>(ModState.Config));
         }
 
         ModEvents.Publish(new IconChangedEventArgs(uniqueId));
     }
+
+    /// <inheritdoc />
+    public void AddToolbarIcon(
+        string id,
+        string texturePath,
+        Rectangle? sourceRect,
+        Func<string>? getTitle,
+        Func<string>? getDescription,
+        Action onClick,
+        Action? onRightClick = null)
+    {
+        this.AddToolbarIcon(id, texturePath, sourceRect, getTitle, getDescription);
+        this.Subscribe(e =>
+        {
+            if (e.Id != id)
+            {
+                return;
+            }
+
+            if (e.Button.IsActionButton() && onRightClick is not null)
+            {
+                onRightClick();
+                return;
+            }
+
+            onClick();
+        });
+    }
+
+    /// <inheritdoc />
+    public void AddToolbarIcon(
+        string texturePath,
+        Rectangle? sourceRect,
+        Func<string>? getTitle,
+        Func<string>? getDescription,
+        Action onClick,
+        Action? onRightClick = null) =>
+        this.AddToolbarIcon(string.Empty, texturePath, sourceRect, getTitle, getDescription, onClick, onRightClick);
 
     /// <inheritdoc />
     public void RemoveToolbarIcon(string id)
@@ -114,11 +156,14 @@ public sealed class ModApi : IIconicFrameworkApi
         }
 
         _ = this.ids.Remove(uniqueId);
-        if (this.icons.Remove(uniqueId))
+        if (ModState.Icons.Remove(uniqueId))
         {
             ModEvents.Publish(new IconChangedEventArgs(uniqueId));
         }
     }
+
+    /// <inheritdoc />
+    public void RemoveToolbarIcon() => this.RemoveToolbarIcon(string.Empty);
 
     /// <inheritdoc />
     public void Subscribe(Action<IIconPressedEventArgs> handler) => this.eventManager.Subscribe(handler);
@@ -133,15 +178,13 @@ public sealed class ModApi : IIconicFrameworkApi
             return;
         }
 
-        var button = e.Button switch
+        var button = e.Button;
+        if (button.IsActionButton() && !ModState.Config.EnableSecondary)
         {
-            SButton.MouseLeft => SButton.MouseLeft,
-            SButton.ControllerA => SButton.ControllerA,
-            SButton.MouseRight when this.config.EnableSecondary => SButton.MouseRight,
-            SButton.ControllerB when this.config.EnableSecondary => SButton.ControllerB,
-            SButton.ControllerB => SButton.ControllerA,
-            _ => SButton.MouseLeft
-        };
+            button = e.Button.TryGetController(out _)
+                ? SButton.ControllerX
+                : SButton.MouseLeft;
+        }
 
         var iconPressedEventArgs = new IconPressedEventArgs(id, button);
         this.eventManager.Publish<IIconPressedEventArgs, IconPressedEventArgs>(iconPressedEventArgs);

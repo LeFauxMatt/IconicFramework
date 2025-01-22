@@ -13,22 +13,12 @@ internal sealed class Calendar
     ///     Initializes a new instance of the <see cref="Calendar" /> class.
     /// </summary>
     /// <param name="api">The Iconic Framework API.</param>
-    public Calendar(IIconicFrameworkApi api)
-    {
+    public Calendar(IIconicFrameworkApi api) =>
         api.AddToolbarIcon(
             Id,
             Constants.IconPath,
             new Rectangle(32, 16, 16, 16),
             I18n.Button_Calendar_Title,
-            I18n.Button_Calendar_Description);
-
-        api.Subscribe(
-            e =>
-            {
-                if (e.Id == Id)
-                {
-                    Game1.activeClickableMenu = new Billboard();
-                }
-            });
-    }
+            I18n.Button_Calendar_Description,
+            static () => Game1.activeClickableMenu = new Billboard());
 }

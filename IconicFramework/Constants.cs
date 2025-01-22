@@ -8,5 +8,7 @@ internal static class Constants
 
     public const string ModId = "furyx639.ToolbarIcons";
 
+    public const string TextureOverridesPath = ModId + "/TextureOverrides";
+
     public const string UiPath = ModId + "/UI";
 }

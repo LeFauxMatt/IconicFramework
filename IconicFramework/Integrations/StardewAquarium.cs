@@ -1,4 +1,5 @@
 using LeFauxMods.Common.Integrations.IconicFramework;
+using LeFauxMods.Common.Utilities;
 using LeFauxMods.IconicFramework.Utilities;
 using Microsoft.Xna.Framework;
 
@@ -21,9 +22,19 @@ internal sealed class StardewAquarium
             return;
         }
 
-        var method = reflection.GetMethod(mod, "OpenAquariumCollectionMenu", false);
+        IReflectedMethod? method = null;
+        try
+        {
+            method = reflection.GetMethod(mod, "OpenAquariumCollectionMenu", false);
+        }
+        catch
+        {
+            // ignored
+        }
+
         if (method is null)
         {
+            Log.WarnOnce("Integration with {0} failed to load method.", Id);
             return;
         }
 
@@ -32,14 +43,7 @@ internal sealed class StardewAquarium
             Constants.IconPath,
             new Rectangle(0, 0, 16, 16),
             I18n.Button_StardewAquarium_Title,
-            I18n.Button_StardewAquarium_Description);
-        api.Subscribe(
-            e =>
-            {
-                if (e.Id == Id)
-                {
-                    method.Invoke("aquariumprogress", Array.Empty<string>());
-                }
-            });
+            I18n.Button_StardewAquarium_Description,
+            () => method.Invoke("aquariumprogress", Array.Empty<string>()));
     }
 }

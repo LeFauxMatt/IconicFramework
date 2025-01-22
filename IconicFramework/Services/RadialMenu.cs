@@ -8,8 +8,6 @@ namespace LeFauxMods.IconicFramework.Services;
 
 internal sealed class RadialMenu : IRadialMenuPageFactory
 {
-    private readonly ModConfig config;
-    private readonly Dictionary<string, IconComponent> icons;
     private readonly IManifest manifest;
     private readonly IRadialMenuApi radialMenu;
     private readonly PerScreen<RadialMenuPage?> radialMenuPage = new();
@@ -17,15 +15,11 @@ internal sealed class RadialMenu : IRadialMenuPageFactory
     /// <summary>Initializes a new instance of the <see cref="RadialMenu" /> class.</summary>
     /// <param name="api">The radial menu api.</param>
     /// <param name="manifest">The mod's manifest.</param>
-    /// <param name="config">The mod's configuration.</param>
-    /// <param name="icons">The icons.</param>
-    public RadialMenu(IRadialMenuApi api, IManifest manifest, ModConfig config, Dictionary<string, IconComponent> icons)
+    public RadialMenu(IRadialMenuApi api, IManifest manifest)
     {
         // Init
         this.radialMenu = api;
         this.manifest = manifest;
-        this.config = config;
-        this.icons = icons;
         this.radialMenu.RegisterCustomMenuPage(manifest, "icons", this);
 
         // Events
@@ -35,7 +29,7 @@ internal sealed class RadialMenu : IRadialMenuPageFactory
 
     public IRadialMenuPage CreatePage(Farmer who)
     {
-        this.radialMenuPage.Value ??= new RadialMenuPage(this.config, this.icons);
+        this.radialMenuPage.Value ??= new RadialMenuPage(ModState.Config, ModState.Icons);
         this.radialMenuPage.Value.ReloadIcons();
         return this.radialMenuPage.Value;
     }

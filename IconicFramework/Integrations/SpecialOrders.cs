@@ -23,46 +23,43 @@ internal sealed class SpecialOrders
         this.api = api;
         this.helper = helper;
 
-        api.Subscribe(
-            e =>
+        api.Subscribe(static e =>
+        {
+            if (e.Id != Id)
             {
-                if (e.Id != Id)
-                {
+                return;
+            }
+
+            switch (e.Button)
+            {
+                case SButton.MouseRight or SButton.ControllerB:
+                    Game1.player.team.qiChallengeBoardMutex.RequestLock(static delegate
+                    {
+                        Game1.activeClickableMenu = new SpecialOrdersBoard("Qi")
+                        {
+                            behaviorBeforeCleanup = static delegate
+                            {
+                                Game1.player.team.qiChallengeBoardMutex.ReleaseLock();
+                            }
+                        };
+                    });
+
                     return;
-                }
-
-                switch (e.Button)
-                {
-                    case SButton.MouseRight or SButton.ControllerB:
-                        Game1.player.team.qiChallengeBoardMutex.RequestLock(
-                            delegate
+                default:
+                    Game1.player.team.ordersBoardMutex.RequestLock(static delegate
+                    {
+                        Game1.activeClickableMenu = new SpecialOrdersBoard
+                        {
+                            behaviorBeforeCleanup = static delegate
                             {
-                                Game1.activeClickableMenu = new SpecialOrdersBoard("Qi")
-                                {
-                                    behaviorBeforeCleanup = delegate
-                                    {
-                                        Game1.player.team.qiChallengeBoardMutex.ReleaseLock();
-                                    }
-                                };
-                            });
+                                Game1.player.team.ordersBoardMutex.ReleaseLock();
+                            }
+                        };
+                    });
 
-                        return;
-                    default:
-                        Game1.player.team.ordersBoardMutex.RequestLock(
-                            delegate
-                            {
-                                Game1.activeClickableMenu = new SpecialOrdersBoard
-                                {
-                                    behaviorBeforeCleanup = delegate
-                                    {
-                                        Game1.player.team.ordersBoardMutex.ReleaseLock();
-                                    }
-                                };
-                            });
-
-                        return;
-                }
-            });
+                    return;
+            }
+        });
 
         helper.Events.GameLoop.ReturnedToTitle += this.OnReturnedToTitle;
         helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;

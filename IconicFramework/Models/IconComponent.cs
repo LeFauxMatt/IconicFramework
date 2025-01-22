@@ -7,29 +7,32 @@ using StardewValley.Menus;
 
 namespace LeFauxMods.IconicFramework.Models;
 
-/// <summary>Creates a new instance of the <see cref="IconComponent" /> class.</summary>
-/// <param name="uniqueId">The icon's unique id.</param>
-/// <param name="texture">The icon's texture.</param>
-/// <param name="sourceRectangle">The icon's source rectangle.</param>
-/// <param name="getTitle">Text to appear as the title in the Radial Menu.</param>
-/// <param name="getDescription">Text to appear when hovering over the icon.</param>
-/// <param name="scale">The icon's scale.</param>
-internal sealed class IconComponent(
-    string uniqueId,
-    Texture2D texture,
-    Rectangle sourceRectangle,
-    Func<string>? getTitle,
-    Func<string>? getDescription,
-    float scale) : ClickableTextureComponent(
+internal sealed class IconComponent : ClickableTextureComponent, IRadialMenuItem
+{
+    /// <summary>Creates a new instance of the <see cref="IconComponent" /> class.</summary>
+    /// <param name="uniqueId">The icon's unique id.</param>
+    /// <param name="texture">The icon's texture.</param>
+    /// <param name="sourceRectangle">The icon's source rectangle.</param>
+    /// <param name="getTitle">Text to appear as the title in the Radial Menu.</param>
+    /// <param name="getDescription">Text to appear when hovering over the icon.</param>
+    /// <param name="scale">The icon's scale.</param>
+    public IconComponent(
+        string uniqueId,
+        Texture2D texture,
+        Rectangle sourceRectangle,
+        Func<string>? getTitle,
+        Func<string>? getDescription,
+        float scale) : base(
         uniqueId,
         Rectangle.Empty,
         getTitle?.Invoke(),
         getDescription?.Invoke(),
         texture,
         sourceRectangle,
-        scale),
-    IRadialMenuItem
-{
+        scale)
+    {
+    }
+
     /// <inheritdoc />
     public string Description => string.IsNullOrWhiteSpace(this.hoverText) ? this.label : this.hoverText;
 
@@ -53,7 +56,7 @@ internal sealed class IconComponent(
         var button = requestedAction switch
         {
             MenuItemAction.Select => SButton.ControllerA,
-            MenuItemAction.Use => SButton.ControllerB
+            MenuItemAction.Use => SButton.ControllerX
         };
 
         ModEvents.Publish<IIconPressedEventArgs, IconPressedEventArgs>(

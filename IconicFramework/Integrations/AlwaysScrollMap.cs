@@ -1,4 +1,5 @@
 using LeFauxMods.Common.Integrations.IconicFramework;
+using LeFauxMods.Common.Utilities;
 using LeFauxMods.IconicFramework.Utilities;
 using Microsoft.Xna.Framework;
 
@@ -27,29 +28,39 @@ internal sealed class AlwaysScrollMap
             return;
         }
 
-        var enabledIndoors = reflection.GetField<bool>(config, "EnabledIndoors", false);
-        var enabledOutdoors = reflection.GetField<bool>(config, "EnabledOutdoors", false);
+        IReflectedField<bool>? enabledIndoors = null;
+        IReflectedField<bool>? enabledOutdoors = null;
+
+        try
+        {
+            enabledIndoors = reflection.GetField<bool>(config, "EnabledIndoors", false);
+            enabledOutdoors = reflection.GetField<bool>(config, "EnabledOutdoors", false);
+        }
+        catch
+        {
+            Log.WarnOnce("Integration with {0} failed to load method.", Id);
+        }
+
+        if (enabledIndoors is null || enabledOutdoors is null)
+        {
+            return;
+        }
 
         api.AddToolbarIcon(
             Id,
             Constants.IconPath,
-            new Rectangle(32, 16, 16, 16),
+            new Rectangle(32, 0, 16, 16),
             I18n.Button_AlwaysScrollMap_Title,
-            I18n.Button_AlwaysScrollMap_Description);
-
-        api.Subscribe(
-            e =>
+            I18n.Button_AlwaysScrollMap_Description,
+            () =>
             {
-                if (e.Id == Id)
+                if (Game1.currentLocation.IsOutdoors)
                 {
-                    if (Game1.currentLocation.IsOutdoors)
-                    {
-                        enabledOutdoors.SetValue(!enabledOutdoors.GetValue());
-                    }
-                    else
-                    {
-                        enabledIndoors.SetValue(!enabledIndoors.GetValue());
-                    }
+                    enabledOutdoors.SetValue(!enabledOutdoors.GetValue());
+                }
+                else
+                {
+                    enabledIndoors.SetValue(!enabledIndoors.GetValue());
                 }
             });
     }
