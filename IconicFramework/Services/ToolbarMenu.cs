@@ -172,7 +172,7 @@ internal sealed class ToolbarMenu : IClickableMenu, IDisposable
         var playerGlobalPos = Game1.player.StandingPixel.ToVector2();
         var playerLocalVec = Game1.GlobalToLocal(Game1.viewport, playerGlobalPos);
         var alignTop = !Game1.options.pinToolbarToggle &&
-            playerLocalVec.Y > (int)(Game1.viewport.Height / 2f) + Game1.tileSize;
+                       playerLocalVec.Y > (int)(Game1.viewport.Height / 2f) + Game1.tileSize;
 
         var previousX = this.xPositionOnScreen;
         var previousY = this.yPositionOnScreen;

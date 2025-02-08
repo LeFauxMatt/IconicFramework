@@ -1,5 +1,5 @@
 {
-  "Format": "2.4.0",
+  "Format": "2.5.0",
   "ConfigSchema": {
     "EventLookupHotkey": {
       "AllowBlank": true,
@@ -17,27 +17,6 @@
   "Changes": [
     {
       "Action": "Include",
-      "FromFile": "data/ChestsAnywhere.json",
-      "When": {
-        "HasMod": "Pathoschild.ChestsAnywhere"
-      }
-    },
-    {
-      "Action": "Include",
-      "FromFile": "data/DataLayers.json",
-      "When": {
-        "HasMod": "Pathoschild.DataLayers"
-      }
-    },
-    {
-      "Action": "Include",
-      "FromFile": "data/DebugMode.json",
-      "When": {
-        "HasMod": "Pathoschild.DebugMode"
-      }
-    },
-    {
-      "Action": "Include",
       "FromFile": "data/EventLookup.json",
       "When": {
         "HasMod": "shekurika.EventLookup"
@@ -52,23 +31,9 @@
     },
     {
       "Action": "Include",
-      "FromFile": "data/HorseFluteAnywhere.json",
-      "When": {
-        "HasMod": "Pathoschild.HorseFluteAnywhere"
-      }
-    },
-    {
-      "Action": "Include",
       "FromFile": "data/InstantBuildings.json",
       "When": {
         "HasMod": "BitwiseJonMods.InstantBuildings"
-      }
-    },
-    {
-      "Action": "Include",
-      "FromFile": "data/LookupAnything.json",
-      "When": {
-        "HasMod": "Pathoschild.LookupAnything"
       }
     },
     {
@@ -83,13 +48,6 @@
       "FromFile": "data/Screenshot.json",
       "When": {
         "HasMod": "aedenthorn.Screenshot"
-      }
-    },
-    {
-      "Action": "Include",
-      "FromFile": "data/TractorMod.json",
-      "When": {
-        "HasMod": "Pathoschild.TractorMod"
       }
     }
   ],
