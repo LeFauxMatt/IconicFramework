@@ -12,8 +12,8 @@ internal sealed class ConfigMenu
 {
     private readonly IGenericModConfigMenuApi api = null!;
     private readonly GenericModConfigMenuIntegration gmcm;
-    private readonly IManifest manifest;
     private readonly IModHelper helper;
+    private readonly IManifest manifest;
     private bool reloadConfig;
 
     public ConfigMenu(IModHelper helper, IManifest manifest, GenericModConfigMenuIntegration gmcm)

@@ -1,5 +1,5 @@
 using LeFauxMods.Common.Integrations.IconicFramework;
-using LeFauxMods.Common.Integrations.RadialMenu;
+using LeFauxMods.Common.Integrations.StarControl;
 using LeFauxMods.Common.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -39,29 +39,23 @@ internal sealed class IconComponent : ClickableTextureComponent, IRadialMenuItem
     /// <inheritdoc />
     public Rectangle? SourceRectangle => this.sourceRect;
 
+    public ItemActivationResult Activate(Farmer who, DelayedActions delayedActions,
+        ItemActivationType activationType = ItemActivationType.Primary)
+    {
+        if (delayedActions != DelayedActions.None)
+        {
+            return ItemActivationResult.Delayed;
+        }
+
+        ModEvents.Publish<IIconPressedEventArgs, IconPressedEventArgs>(
+            new IconPressedEventArgs(this.name, SButton.ControllerA));
+
+        return ItemActivationResult.Selected;
+    }
+
     /// <inheritdoc />
     public Texture2D? Texture => this.texture;
 
     /// <inheritdoc />
     public string Title => this.label;
-
-    /// <inheritdoc />
-    public MenuItemActivationResult Activate(Farmer who, DelayedActions delayedActions, MenuItemAction requestedAction)
-    {
-        if (delayedActions != DelayedActions.None)
-        {
-            return MenuItemActivationResult.Delayed;
-        }
-
-        var button = requestedAction switch
-        {
-            MenuItemAction.Select => SButton.ControllerA,
-            MenuItemAction.Use => SButton.ControllerX
-        };
-
-        ModEvents.Publish<IIconPressedEventArgs, IconPressedEventArgs>(
-            new IconPressedEventArgs(this.name, button));
-
-        return MenuItemActivationResult.Selected;
-    }
 }

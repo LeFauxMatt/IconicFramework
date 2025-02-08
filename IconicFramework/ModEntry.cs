@@ -1,6 +1,6 @@
 using LeFauxMods.Common.Integrations.ContentPatcher;
 using LeFauxMods.Common.Integrations.GenericModConfigMenu;
-using LeFauxMods.Common.Integrations.RadialMenu;
+using LeFauxMods.Common.Integrations.StarControl;
 using LeFauxMods.Common.Services;
 using LeFauxMods.Common.Utilities;
 using LeFauxMods.IconicFramework.Integrations;
@@ -42,10 +42,10 @@ internal sealed class ModEntry : Mod
         _ = new ToDew(api);
         _ = new ToggleCollisions(api);
 
-        var radialMenuIntegration = new RadialMenuIntegration(this.Helper.ModRegistry);
-        if (radialMenuIntegration.IsLoaded)
+        var starControlIntegration = new StarControlIntegration(this.Helper.ModRegistry);
+        if (starControlIntegration.IsLoaded)
         {
-            _ = new RadialMenu(radialMenuIntegration.Api, this.ModManifest);
+            _ = new RadialMenu(starControlIntegration.Api, this.ModManifest);
         }
     }
 

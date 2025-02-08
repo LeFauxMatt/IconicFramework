@@ -1,4 +1,4 @@
-using LeFauxMods.Common.Integrations.RadialMenu;
+using LeFauxMods.Common.Integrations.StarControl;
 using LeFauxMods.Common.Models;
 using LeFauxMods.Common.Utilities;
 using LeFauxMods.IconicFramework.Models;
@@ -9,13 +9,13 @@ namespace LeFauxMods.IconicFramework.Services;
 internal sealed class RadialMenu : IRadialMenuPageFactory
 {
     private readonly IManifest manifest;
-    private readonly IRadialMenuApi radialMenu;
+    private readonly IStarControlApi radialMenu;
     private readonly PerScreen<RadialMenuPage?> radialMenuPage = new();
 
     /// <summary>Initializes a new instance of the <see cref="RadialMenu" /> class.</summary>
     /// <param name="api">The radial menu api.</param>
     /// <param name="manifest">The mod's manifest.</param>
-    public RadialMenu(IRadialMenuApi api, IManifest manifest)
+    public RadialMenu(IStarControlApi api, IManifest manifest)
     {
         // Init
         this.radialMenu = api;
