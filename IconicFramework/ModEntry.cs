@@ -1,6 +1,5 @@
 using LeFauxMods.Common.Integrations.ContentPatcher;
 using LeFauxMods.Common.Integrations.GenericModConfigMenu;
-using LeFauxMods.Common.Integrations.RadialMenu;
 using LeFauxMods.Common.Services;
 using LeFauxMods.Common.Utilities;
 using LeFauxMods.IconicFramework.Integrations;
@@ -41,12 +40,6 @@ internal sealed class ModEntry : Mod
         _ = new StardewAquarium(api, this.Helper.Reflection);
         _ = new ToDew(api);
         _ = new ToggleCollisions(api);
-
-        var radialMenuIntegration = new RadialMenuIntegration(this.Helper.ModRegistry);
-        if (radialMenuIntegration.IsLoaded)
-        {
-            _ = new RadialMenu(radialMenuIntegration.Api, this.ModManifest);
-        }
     }
 
     /// <inheritdoc />

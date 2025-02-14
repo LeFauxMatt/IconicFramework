@@ -1,3 +1,4 @@
+using LeFauxMods.Common.Integrations.StarControl;
 using LeFauxMods.Common.Services;
 using LeFauxMods.Common.Utilities;
 using LeFauxMods.IconicFramework.Models;
@@ -12,6 +13,7 @@ internal sealed class ModState
     private readonly ConfigHelper<ModConfig> configHelper;
     private readonly IModHelper helper;
     private readonly Dictionary<string, IconComponent> icons = new(StringComparer.OrdinalIgnoreCase);
+    private StarControlIntegration? starControl;
     private Dictionary<string, TextureOverride>? textureOverrides;
 
     private ModState(IModHelper helper)
@@ -26,6 +28,9 @@ internal sealed class ModState
     public static ConfigHelper<ModConfig> ConfigHelper => Instance!.configHelper;
 
     public static Dictionary<string, IconComponent> Icons => Instance!.icons;
+
+    public static StarControlIntegration StarControl =>
+        Instance!.starControl ??= new StarControlIntegration(Instance.helper.ModRegistry);
 
     public static Dictionary<string, TextureOverride> TextureOverrides =>
         Instance!.textureOverrides ??=
