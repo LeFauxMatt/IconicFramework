@@ -11,19 +11,17 @@ namespace LeFauxMods.IconicFramework.Services;
 internal sealed class IconConfigOption : ComplexOption
 {
     private readonly List<ClickableTextureComponent> components = [];
-    private readonly IModHelper helper;
-    private readonly List<IconConfig> icons;
     private ClickableTextureComponent? heldIcon;
     private int heldIndex;
     private int heldItem;
     private Point offset;
 
-    public IconConfigOption(IModHelper helper, List<IconConfig> icons)
+    public IconConfigOption(IModHelper helper)
+        : base(helper)
     {
-        this.helper = helper;
-        this.icons = icons;
         this.Height = Game1.tileSize * ModState.Icons.Count;
 
+        var icons = ModState.ConfigHelper.Temp.Icons;
         var i = -1;
         for (var j = 0; j < ModState.Icons.Count; j++)
         {
@@ -93,32 +91,20 @@ internal sealed class IconConfigOption : ComplexOption
     }
 
     /// <inheritdoc />
-    public override int Height { get; }
-
-    /// <inheritdoc />
     public override string Name => string.Empty;
 
     /// <inheritdoc />
     public override string Tooltip => string.Empty;
 
     /// <inheritdoc />
-    public override void Draw(SpriteBatch spriteBatch, Vector2 pos)
+    public override void DrawOption(SpriteBatch spriteBatch, Vector2 pos)
     {
-        var availableWidth = Math.Min(1200, Game1.uiViewport.Width - 200);
-        pos.X -= availableWidth / 2f;
-        var (originX, originY) = pos.ToPoint();
-        var (mouseX, mouseY) = this.helper.Input.GetCursorPosition().GetScaledScreenPixels().ToPoint();
-
-        mouseX -= originX;
-        mouseY -= originY;
-
-        var mouseLeft = this.helper.Input.GetState(SButton.MouseLeft);
-        var controllerA = this.helper.Input.GetState(SButton.ControllerA);
-        var pressed = mouseLeft is SButtonState.Pressed || controllerA is SButtonState.Pressed;
-        var held = mouseLeft is SButtonState.Held || controllerA is SButtonState.Held;
+        var (originX, originY) = this.Origin;
+        var (mouseX, mouseY) = this.MousePos;
 
         ClickableTextureComponent? hovered = null;
         ClickableTextureComponent? icon = null;
+        var icons = ModState.ConfigHelper.Temp.Icons;
         var item = -1;
         var index = -1;
 
@@ -148,7 +134,7 @@ internal sealed class IconConfigOption : ComplexOption
                         (this.components[this.heldItem].bounds, this.components[item].bounds);
 
                     // Swap config
-                    (this.icons[index], this.icons[this.heldIndex]) = (this.icons[this.heldIndex], this.icons[index]);
+                    (icons[index], icons[this.heldIndex]) = (icons[this.heldIndex], icons[index]);
 
                     this.heldItem = item;
                     this.heldIndex = index;
@@ -186,7 +172,7 @@ internal sealed class IconConfigOption : ComplexOption
             }
         }
 
-        if (pressed && hovered is not null)
+        if (this.Pressed && hovered is not null)
         {
             switch (hovered.name)
             {
@@ -204,20 +190,20 @@ internal sealed class IconConfigOption : ComplexOption
                         (this.components[item + 5].bounds, this.components[item].bounds);
 
                     // Swap config
-                    (this.icons[index], this.icons[otherIndex]) = (this.icons[otherIndex], this.icons[index]);
+                    (icons[index], icons[otherIndex]) = (icons[otherIndex], icons[index]);
 
                     break;
                 case "showRadial":
                     Game1.playSound("drumkit6");
-                    this.icons[index].ShowRadial = !this.icons[index].ShowRadial;
-                    hovered.sourceRect = this.icons[index].ShowRadial
+                    icons[index].ShowRadial = !icons[index].ShowRadial;
+                    hovered.sourceRect = icons[index].ShowRadial
                         ? OptionsCheckbox.sourceRectChecked
                         : OptionsCheckbox.sourceRectUnchecked;
                     break;
                 case "showToolbar":
                     Game1.playSound("drumkit6");
-                    this.icons[index].ShowToolbar = !this.icons[index].ShowToolbar;
-                    hovered.sourceRect = this.icons[index].ShowToolbar
+                    icons[index].ShowToolbar = !icons[index].ShowToolbar;
+                    hovered.sourceRect = icons[index].ShowToolbar
                         ? OptionsCheckbox.sourceRectChecked
                         : OptionsCheckbox.sourceRectUnchecked;
                     break;
@@ -235,7 +221,7 @@ internal sealed class IconConfigOption : ComplexOption
                         (this.components[item - 5].bounds, this.components[item].bounds);
 
                     // Swap config
-                    (this.icons[index], this.icons[otherIndex]) = (this.icons[otherIndex], this.icons[index]);
+                    (icons[index], icons[otherIndex]) = (icons[otherIndex], icons[index]);
 
                     break;
                 case not null when icon is not null:
@@ -247,7 +233,7 @@ internal sealed class IconConfigOption : ComplexOption
                     break;
             }
         }
-        else if (held && this.heldIcon is not null)
+        else if (this.Held && this.heldIcon is not null)
         {
             this.heldIcon.draw(
                 spriteBatch,
@@ -257,7 +243,7 @@ internal sealed class IconConfigOption : ComplexOption
                 originX + mouseX - this.heldIcon.bounds.X + this.offset.X,
                 originY + mouseY - this.heldIcon.bounds.Y + this.offset.Y);
         }
-        else if (this.heldIcon is not null && !pressed && !held)
+        else if (this.heldIcon is not null && !this.Pressed && !this.Held)
         {
             this.heldIcon = null;
         }

@@ -1,6 +1,7 @@
 using LeFauxMods.Common.Integrations.IconicFramework;
 using LeFauxMods.Common.Integrations.StarControl;
 using LeFauxMods.Common.Utilities;
+using LeFauxMods.IconicFramework.Services;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley.Menus;
@@ -9,6 +10,8 @@ namespace LeFauxMods.IconicFramework.Models;
 
 internal sealed class IconComponent : ClickableTextureComponent, IRadialMenuItem
 {
+    private readonly Lazy<IconConfig?> config;
+
     /// <summary>Creates a new instance of the <see cref="IconComponent" /> class.</summary>
     /// <param name="uniqueId">The icon's unique id.</param>
     /// <param name="texture">The icon's texture.</param>
@@ -29,15 +32,27 @@ internal sealed class IconComponent : ClickableTextureComponent, IRadialMenuItem
         getDescription?.Invoke(),
         texture,
         sourceRectangle,
-        scale)
-    {
-    }
+        scale) =>
+        this.config = new Lazy<IconConfig?>(() =>
+            ModState.Config.Icons.FirstOrDefault(iconConfig => iconConfig.Id == uniqueId));
 
     /// <inheritdoc />
     public string Description => string.IsNullOrWhiteSpace(this.hoverText) ? this.label : this.hoverText;
 
     /// <inheritdoc />
+    public bool Enabled => this.config.Value?.ShowRadial ?? false;
+
+    /// <inheritdoc />
+    public string Id => this.name;
+
+    /// <inheritdoc />
     public Rectangle? SourceRectangle => this.sourceRect;
+
+    /// <inheritdoc />
+    public Texture2D? Texture => this.texture;
+
+    /// <inheritdoc />
+    public string Title => this.label;
 
     public ItemActivationResult Activate(Farmer who, DelayedActions delayedActions,
         ItemActivationType activationType = ItemActivationType.Primary)
@@ -47,15 +62,19 @@ internal sealed class IconComponent : ClickableTextureComponent, IRadialMenuItem
             return ItemActivationResult.Delayed;
         }
 
-        ModEvents.Publish<IIconPressedEventArgs, IconPressedEventArgs>(
-            new IconPressedEventArgs(this.name, SButton.ControllerA));
+        switch (activationType)
+        {
+            case ItemActivationType.Secondary:
+                ModEvents.Publish<IIconPressedEventArgs, IconPressedEventArgs>(
+                    new IconPressedEventArgs(this.name, SButton.ControllerA));
+                break;
+
+            default:
+                ModEvents.Publish<IIconPressedEventArgs, IconPressedEventArgs>(
+                    new IconPressedEventArgs(this.name, SButton.ControllerB));
+                break;
+        }
 
         return ItemActivationResult.Selected;
     }
-
-    /// <inheritdoc />
-    public Texture2D? Texture => this.texture;
-
-    /// <inheritdoc />
-    public string Title => this.label;
 }

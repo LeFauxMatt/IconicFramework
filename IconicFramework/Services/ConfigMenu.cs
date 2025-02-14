@@ -153,6 +153,6 @@ internal sealed class ConfigMenu
         this.api.AddSectionTitle(this.manifest, I18n.Config_CustomizeToolbar_Name,
             I18n.Config_CustomizeToolbar_Tooltip);
 
-        this.gmcm.AddComplexOption(new IconConfigOption(this.helper, Config.Icons));
+        this.gmcm.AddComplexOption(new IconConfigOption(this.helper));
     }
 }

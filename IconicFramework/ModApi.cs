@@ -99,6 +99,11 @@ public sealed class ModApi : IIconicFrameworkApi
             return;
         }
 
+        if (ModState.StarControl.IsLoaded)
+        {
+            ModState.StarControl.Api.RegisterItems(this.mod.Manifest, [icon]);
+        }
+
         if (ModState.Config.Icons.All(iconConfig => iconConfig.Id != uniqueId))
         {
             ModState.Config.Icons.Add(new IconConfig { Id = uniqueId });
@@ -147,23 +152,10 @@ public sealed class ModApi : IIconicFrameworkApi
         this.AddToolbarIcon(string.Empty, texturePath, sourceRect, getTitle, getDescription, onClick, onRightClick);
 
     /// <inheritdoc />
-    public void RemoveToolbarIcon(string id)
-    {
-        var uniqueId = $"{this.mod.Manifest.UniqueID}-{id}";
-        if (!this.ids.ContainsKey(uniqueId))
-        {
-            return;
-        }
-
-        _ = this.ids.Remove(uniqueId);
-        if (ModState.Icons.Remove(uniqueId))
-        {
-            ModEvents.Publish(new IconChangedEventArgs(uniqueId));
-        }
-    }
+    public void RemoveToolbarIcon(string id) { }
 
     /// <inheritdoc />
-    public void RemoveToolbarIcon() => this.RemoveToolbarIcon(string.Empty);
+    public void RemoveToolbarIcon() { }
 
     /// <inheritdoc />
     public void Subscribe(Action<IIconPressedEventArgs> handler) => this.eventManager.Subscribe(handler);
