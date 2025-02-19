@@ -15,7 +15,7 @@ internal sealed class ToggleCollisions
     public ToggleCollisions(IIconicFrameworkApi api) =>
         api.AddToolbarIcon(
             Id,
-            Constants.IconPath,
+            ModConstants.IconPath,
             new Rectangle(16, 16, 16, 16),
             I18n.Button_NoClip_Title,
             I18n.Button_NoClip_Disable,
@@ -26,7 +26,7 @@ internal sealed class ToggleCollisions
                 {
                     api.AddToolbarIcon(
                         Id,
-                        Constants.IconPath,
+                        ModConstants.IconPath,
                         new Rectangle(16, 16, 16, 16),
                         I18n.Button_NoClip_Title,
                         I18n.Button_NoClip_Enable);
@@ -36,7 +36,7 @@ internal sealed class ToggleCollisions
 
                 api.AddToolbarIcon(
                     Id,
-                    Constants.IconPath,
+                    ModConstants.IconPath,
                     new Rectangle(16, 16, 16, 16),
                     I18n.Button_NoClip_Title,
                     I18n.Button_NoClip_Disable);

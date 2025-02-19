@@ -34,13 +34,13 @@ internal sealed class ModState
 
     public static Dictionary<string, TextureOverride> TextureOverrides =>
         Instance!.textureOverrides ??=
-            Instance.helper.GameContent.Load<Dictionary<string, TextureOverride>>(Constants.TextureOverridesPath);
+            Instance.helper.GameContent.Load<Dictionary<string, TextureOverride>>(ModConstants.TextureOverridesPath);
 
     public static void Init(IModHelper helper) => Instance ??= new ModState(helper);
 
     private void OnAssetsInvalidated(object? sender, AssetsInvalidatedEventArgs e)
     {
-        if (e.NamesWithoutLocale.Any(static name => name.IsEquivalentTo(Constants.TextureOverridesPath)))
+        if (e.NamesWithoutLocale.Any(static name => name.IsEquivalentTo(ModConstants.TextureOverridesPath)))
         {
             this.textureOverrides = null;
             this.helper.Events.GameLoop.UpdateTicking += this.OnUpdateTicking;

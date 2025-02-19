@@ -76,7 +76,7 @@ internal sealed class SpecialOrders
 
         this.api.AddToolbarIcon(
             Id,
-            Constants.IconPath,
+            ModConstants.IconPath,
             new Rectangle(64, 0, 16, 16),
             I18n.Button_SpecialOrders_Title,
             I18n.Button_SpecialOrders_Description);

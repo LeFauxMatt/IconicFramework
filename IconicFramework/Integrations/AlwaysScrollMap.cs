@@ -48,7 +48,7 @@ internal sealed class AlwaysScrollMap
 
         api.AddToolbarIcon(
             Id,
-            Constants.IconPath,
+            ModConstants.IconPath,
             new Rectangle(32, 0, 16, 16),
             I18n.Button_AlwaysScrollMap_Title,
             I18n.Button_AlwaysScrollMap_Description,

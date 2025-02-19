@@ -20,8 +20,8 @@ internal sealed class ModEntry : Mod
     private void Initialize()
     {
         var themeHelper = ThemeHelper.Init(this.Helper);
-        themeHelper.AddAsset(Constants.IconPath, this.Helper.ModContent.Load<IRawTextureData>("assets/icons.png"));
-        themeHelper.AddAsset(Constants.UiPath, this.Helper.ModContent.Load<IRawTextureData>("assets/ui.png"));
+        themeHelper.AddAsset(ModConstants.IconPath, this.Helper.ModContent.Load<IRawTextureData>("assets/icons.png"));
+        themeHelper.AddAsset(ModConstants.UiPath, this.Helper.ModContent.Load<IRawTextureData>("assets/ui.png"));
 
         var gmcm = new GenericModConfigMenuIntegration(this.ModManifest, this.Helper.ModRegistry);
         _ = new ConfigMenu(this.Helper, this.ModManifest, gmcm);
@@ -71,13 +71,13 @@ internal sealed class ModEntry : Mod
 
     private static void OnAssetRequested(object? sender, AssetRequestedEventArgs e)
     {
-        if (e.NameWithoutLocale.IsEquivalentTo(Constants.DataPath))
+        if (e.NameWithoutLocale.IsEquivalentTo(ModConstants.DataPath))
         {
             e.LoadFrom(
                 static () => new Dictionary<string, ContentData>(StringComparer.OrdinalIgnoreCase),
                 AssetLoadPriority.Exclusive);
         }
-        else if (e.NameWithoutLocale.IsEquivalentTo(Constants.TextureOverridesPath))
+        else if (e.NameWithoutLocale.IsEquivalentTo(ModConstants.TextureOverridesPath))
         {
             e.LoadFrom(
                 static () => new Dictionary<string, TextureOverride>(StringComparer.OrdinalIgnoreCase),

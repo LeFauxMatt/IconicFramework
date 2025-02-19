@@ -16,7 +16,7 @@ internal sealed class DailyQuests
     public DailyQuests(IIconicFrameworkApi api) =>
         api.AddToolbarIcon(
             Id,
-            Constants.IconPath,
+            ModConstants.IconPath,
             new Rectangle(0, 16, 16, 16),
             I18n.Button_DailyQuests_Title,
             I18n.Button_DailyQuests_Description,

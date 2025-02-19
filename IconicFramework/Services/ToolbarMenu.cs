@@ -51,7 +51,7 @@ internal sealed class ToolbarMenu : IClickableMenu, IDisposable
         }
 
         this.AdjustPositionsIfNeeded();
-        var uiTexture = this.helper.GameContent.Load<Texture2D>(Constants.UiPath);
+        var uiTexture = this.helper.GameContent.Load<Texture2D>(ModConstants.UiPath);
 
         // Draw texture behind icons
         foreach (var component in this.allClickableComponents)

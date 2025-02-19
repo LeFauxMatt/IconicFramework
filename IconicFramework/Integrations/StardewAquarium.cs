@@ -40,7 +40,7 @@ internal sealed class StardewAquarium
 
         api.AddToolbarIcon(
             Id,
-            Constants.IconPath,
+            ModConstants.IconPath,
             new Rectangle(0, 0, 16, 16),
             I18n.Button_StardewAquarium_Title,
             I18n.Button_StardewAquarium_Description,

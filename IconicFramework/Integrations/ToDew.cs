@@ -46,7 +46,7 @@ internal sealed class ToDew
 
         api.AddToolbarIcon(
             Id,
-            Constants.IconPath,
+            ModConstants.IconPath,
             new Rectangle(48, 0, 16, 16),
             I18n.Button_ToDew_Title,
             I18n.Button_ToDew_Description,

@@ -34,7 +34,7 @@ internal sealed class ContentPatcher
 
     private void OnAssetsInvalidated(object? sender, AssetsInvalidatedEventArgs e)
     {
-        if (e.NamesWithoutLocale.Any(static assetName => assetName.IsEquivalentTo(Constants.DataPath)))
+        if (e.NamesWithoutLocale.Any(static assetName => assetName.IsEquivalentTo(ModConstants.DataPath)))
         {
             this.ReloadIcons();
         }
@@ -50,7 +50,7 @@ internal sealed class ContentPatcher
 
     private void ReloadIcons()
     {
-        var content = this.helper.GameContent.Load<Dictionary<string, ContentData>>(Constants.DataPath);
+        var content = this.helper.GameContent.Load<Dictionary<string, ContentData>>(ModConstants.DataPath);
         foreach (var (id, data) in content)
         {
             switch (data.Type)

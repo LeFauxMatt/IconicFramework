@@ -16,7 +16,7 @@ internal sealed class Calendar
     public Calendar(IIconicFrameworkApi api) =>
         api.AddToolbarIcon(
             Id,
-            Constants.IconPath,
+            ModConstants.IconPath,
             new Rectangle(32, 16, 16, 16),
             I18n.Button_Calendar_Title,
             I18n.Button_Calendar_Description,

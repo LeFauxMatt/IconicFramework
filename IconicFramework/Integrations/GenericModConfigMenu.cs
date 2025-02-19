@@ -56,7 +56,7 @@ internal sealed class GenericModConfigMenu
 
         api.AddToolbarIcon(
             Id,
-            Constants.IconPath,
+            ModConstants.IconPath,
             new Rectangle(16, 0, 16, 16),
             I18n.Button_GenericModConfigMenu_Title,
             I18n.Button_GenericModConfigMenu_Description);
