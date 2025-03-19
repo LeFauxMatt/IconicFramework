@@ -92,16 +92,16 @@ unique identifier which you can find in your config.json file.
 |            |         Iconic Framework          |                   [CP] Toolbar Icons                   |
 | :--------- | :-------------------------------: | :----------------------------------------------------: |
 | Chinese    | [❌️](IconicFramework/i18n/zh.json) | [❌️](<IconicFramework/[CP] Toolbar Icons/i18n/zh.json>) |
-| French     | [❌️](IconicFramework/i18n/fr.json) | [❌️](<IconicFramework/[CP] Toolbar Icons/i18n/fr.json>  |
-| German     | [❌️](IconicFramework/i18n/de.json) | [❌️](<IconicFramework/[CP] Toolbar Icons/i18n/de.json>  |
-| Hungarian  | [❌️](IconicFramework/i18n/hu.json) | [❌️](<IconicFramework/[CP] Toolbar Icons/i18n/hu.json>  |
-| Italian    | [❌️](IconicFramework/i18n/it.json) | [❌️](<IconicFramework/[CP] Toolbar Icons/i18n/it.json>  |
-| Japanese   | [❌️](IconicFramework/i18n/ja.json) | [❌️](<IconicFramework/[CP] Toolbar Icons/i18n/ja.json>  |
+| French     | [❌️](IconicFramework/i18n/fr.json) | [❌️](<IconicFramework/[CP] Toolbar Icons/i18n/fr.json>) |
+| German     | [❌️](IconicFramework/i18n/de.json) | [❌️](<IconicFramework/[CP] Toolbar Icons/i18n/de.json>) |
+| Hungarian  | [❌️](IconicFramework/i18n/hu.json) | [❌️](<IconicFramework/[CP] Toolbar Icons/i18n/hu.json>) |
+| Italian    | [❌️](IconicFramework/i18n/it.json) | [❌️](<IconicFramework/[CP] Toolbar Icons/i18n/it.json>) |
+| Japanese   | [❌️](IconicFramework/i18n/ja.json) | [❌️](<IconicFramework/[CP] Toolbar Icons/i18n/ja.json>) |
 | Korean     | [❌️](IconicFramework/i18n/ko.json) | [❔](<IconicFramework/[CP] Toolbar Icons/i18n/ko.json>) |
-| Portuguese | [❌️](IconicFramework/i18n/pt.json) | [❌️](<IconicFramework/[CP] Toolbar Icons/i18n/pt.json>  |
-| Russian    | [❌️](IconicFramework/i18n/ru.json) | [❌️](<IconicFramework/[CP] Toolbar Icons/i18n/ru.json>  |
-| Spanish    | [❌️](IconicFramework/i18n/es.json) | [❌️](<IconicFramework/[CP] Toolbar Icons/i18n/es.json>  |
-| Turkish    | [❌️](IconicFramework/i18n/tr.json) | [❌️](<IconicFramework/[CP] Toolbar Icons/i18n/tr.json>  |
+| Portuguese | [❌️](IconicFramework/i18n/pt.json) | [❌️](<IconicFramework/[CP] Toolbar Icons/i18n/pt.json>) |
+| Russian    | [❌️](IconicFramework/i18n/ru.json) | [❌️](<IconicFramework/[CP] Toolbar Icons/i18n/ru.json>) |
+| Spanish    | [❌️](IconicFramework/i18n/es.json) | [❌️](<IconicFramework/[CP] Toolbar Icons/i18n/es.json>) |
+| Turkish    | [❌️](IconicFramework/i18n/tr.json) | [❌️](<IconicFramework/[CP] Toolbar Icons/i18n/tr.json>) |
 
 ## Credits
 
